@@ -9,9 +9,9 @@ class FormatCommand(sublime_plugin.TextCommand):
     	selection = self.view.sel()[0];
     	selection_str = self.view.substr(selection)
     	code_set = SplitCode(selection_str)
-    	code_set.get_html()
+    	selection_str = code_set.get_html()
     	#replace string 
-    	# self.view.replace(edit,selection,selection_str)
+    	self.view.replace(edit,selection,selection_str)
 
 
 class SplitCode:
@@ -23,6 +23,7 @@ class SplitCode:
 		pass
 
 	def get_html(self):
+		return self.string
 		pass
 
 	def get_css(self):
@@ -39,15 +40,12 @@ class SplitCode:
 				break
 
 			space_len = 0;
-			# print raw_str[space_len+index+1] == ' ';
-			# print index
-			# return
 			while raw_str[space_len+index+1] == ' ':
 				space_len+=1
 
 			if space_len > 0:
 				raw_str = raw_str[:index+1]+raw_str[index+1+space_len:]
-				# print raw_str
+				print(raw_str)
 			index += 1;
 
 		index = 0
@@ -63,6 +61,6 @@ class SplitCode:
 				raw_str = raw_str[:index-space_len]+raw_str[index:]
 
 			index+=1
-		print raw_str
+		print(raw_str)
 		return raw_str
 		
