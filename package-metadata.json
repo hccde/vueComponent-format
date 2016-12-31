@@ -1,0 +1,8 @@
+{
+	"platforms": ["*"],
+	"description": "Javascript formatting for Sublime Text 2 & 3",
+	"version": "2016.12.28.18.21.08",
+	"dependencies": [],
+	"url": "https://github.com/hccde/vueComponent-format.git",
+	"sublime_text": "*"
+}
