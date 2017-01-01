@@ -18,7 +18,8 @@ class SplitCode:
 	string = '';
 	string_len = 0;
 	def __init__(self, raw_str):
-		self.string = self.rid_tag_space(raw_str.strip())
+		# self.string = self.rid_tag_space(raw_str.strip())
+		self.string = raw_str;
 		self.string_len = len(self.string)
 		pass
 
@@ -63,4 +64,36 @@ class SplitCode:
 			index+=1
 		print(raw_str)
 		return raw_str
+
+		#just for <script> <template> <style>
+		""" 
+			state 0:Null
+			state 1:tag opened
+			state 2:tag name
+			state 3:tag closed
+			if has a space in tag,we will ignore it;
+		"""
+	def get_tag_byname(self,name):
+		length = len(string);
+		state = {
+			'current_state':3,
+			#collect tag name
+			'collector':'',
+			#store splited tag
+			'tag_stack':[] 
+		}
+		for index in range(0,length):
+			if string[index] =='<':
+				state['current_state'] = 1
+			elif string[index] == '>':
+				state['current_state'] = 3;
+				state['tag_stack'].append(state['collector'])
+				state['collector'] = ''
+			elif state['current_state'] < 3:
+				state['collector'] = string[index] != ' ' and state['collector']+string[index]
+				state['current_state'] = 2;
+		print(state['tag_stack'])
+			#find special tag
+
+
 		
