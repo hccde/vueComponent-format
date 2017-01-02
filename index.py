@@ -23,15 +23,20 @@ class SplitCode:
 		self.string_len = len(self.string)
 		pass
 
+#TODO : if code has string contain'</script>',like 
+	#console.log('</script>')
+#we will get error position,must consider this problem
 	def get_html(self):
-		return self.string
-		pass
+		Pos = self.get_tag_byname('template')
+		return self.string[Pos['begin']:Pos['end']]
 
 	def get_css(self):
-		pass
+		Pos = self.get_tag_byname('style')
+		return self.string[Pos['begin']:Pos['end']]
 
 	def get_js(self):
-		pass
+		Pos = self.get_tag_byname('script')
+		return self.string[Pos['begin']:Pos['end']]
 
 	def rid_tag_space(self,raw_str):
 		index = 0;
@@ -74,7 +79,7 @@ class SplitCode:
 			if has a space in tag,we will ignore it;
 		"""
 	def get_tag_byname(self,name):
-		length = len(string);
+		length = len(self.string);
 		state = {
 			'current_state':3,
 			#collect tag name
@@ -83,17 +88,30 @@ class SplitCode:
 			'tag_stack':[] 
 		}
 		for index in range(0,length):
-			if string[index] =='<':
+			if self.string[index] =='<':
 				state['current_state'] = 1
-			elif string[index] == '>':
+			elif self.string[index] == '>':
 				state['current_state'] = 3;
-				state['tag_stack'].append(state['collector'])
+				state['tag_stack'].append({
+						'name':state['collector'].lower(),
+						'position':index
+					})
 				state['collector'] = ''
 			elif state['current_state'] < 3:
-				state['collector'] = string[index] != ' ' and state['collector']+string[index]
+				state['collector'] = self.string[index] != ' ' and state['collector']+self.string[index]
 				state['current_state'] = 2;
 		print(state['tag_stack'])
 			#find special tag
+		res = {
+			'begin':-1,
+			'end':-1
+		}
+		for index in range(0,len(state['tag_stack'])):
+			if state['tag_stack'] == name:
+				res['begin'] = index
+			if state['tag_stack'] == '/'+name and res['begin'] != -1:
+				res['end'] = index
 
+		return res;
 
 		
