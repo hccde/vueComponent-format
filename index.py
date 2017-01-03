@@ -2,6 +2,9 @@
 # import sublime_plugin
 # import sys
 
+#import html-format module
+import libs.html.format as Html
+
 #main class
 # class FormatCommand(sublime_plugin.TextCommand):
     # def run(self, edit):
@@ -125,6 +128,7 @@ class SplitCode:
 #test
 
 codeset = SplitCode('aaaa< template ><div></div></Template><script>console.log("</script>")</script><style></style>rrr')
-print codeset.get_html()
-print codeset.get_css()
-print codeset.get_js()
+# print codeset.get_html()
+# print codeset.get_css()
+# print codeset.get_js()
+print Html.HtmlFormat(codeset.get_html())
