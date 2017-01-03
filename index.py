@@ -26,6 +26,7 @@ class SplitCode:
 #TODO : if code has string contain'</script>',like 
 	#console.log('</script>')
 #we will get error position,must consider this problem
+#for this problem,we can solve it by always get the last its closed tag which is the outer tag
 	def get_html(self):
 		Pos = self.get_tag_byname('template')
 		return self.string[Pos['begin']:Pos['end']]
@@ -106,11 +107,13 @@ class SplitCode:
 			'begin':-1,
 			'end':-1
 		}
+		temIndex = -1;
 		for index in range(0,len(state['tag_stack'])):
 			if state['tag_stack'] == name:
 				res['begin'] = index
 			if state['tag_stack'] == '/'+name and res['begin'] != -1:
-				res['end'] = index
+				temIndex = index
+		res['end'] = temIndex
 
 		return res;
 
