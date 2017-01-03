@@ -1,17 +1,17 @@
-import sublime
-import sublime_plugin
-import sys
+# import sublime
+# import sublime_plugin
+# import sys
 
 #main class
-class FormatCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
+# class FormatCommand(sublime_plugin.TextCommand):
+    # def run(self, edit):
     	#get the first selection
-    	selection = self.view.sel()[0];
-    	selection_str = self.view.substr(selection)
-    	code_set = SplitCode(selection_str)
-    	selection_str = code_set.get_html()
+    	# selection = self.view.sel()[0];
+    	# selection_str = self.view.substr(selection)
+    	# code_set = SplitCode(selection_str)
+    	# selection_str = code_set.get_html()
     	#replace string 
-    	self.view.replace(edit,selection,selection_str)
+    	# self.view.replace(edit,selection,selection_str)
 
 
 class SplitCode:
@@ -52,7 +52,6 @@ class SplitCode:
 
 			if space_len > 0:
 				raw_str = raw_str[:index+1]+raw_str[index+1+space_len:]
-				print(raw_str)
 			index += 1;
 
 		index = 0
@@ -68,7 +67,6 @@ class SplitCode:
 				raw_str = raw_str[:index-space_len]+raw_str[index:]
 
 			index+=1
-		print(raw_str)
 		return raw_str
 
 		#just for <script> <template> <style>
@@ -89,19 +87,22 @@ class SplitCode:
 			'tag_stack':[] 
 		}
 		for index in range(0,length):
-			if self.string[index] =='<':
+			if self.string[index] =='<' and state['current_state']==3:
 				state['current_state'] = 1
-			elif self.string[index] == '>':
-				state['current_state'] = 3;
 				state['tag_stack'].append({
-						'name':state['collector'].lower(),
-						'position':index
+						'name':'',
+						'end':-1,
+						'begin':index
 					})
+			elif self.string[index] == '>' and state['current_state'] == 2:
+				state['current_state'] = 3;
+				state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector'].lower();
+				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
 				state['collector'] = ''
-			elif state['current_state'] < 3:
-				state['collector'] = self.string[index] != ' ' and state['collector']+self.string[index]
+			elif state['current_state']==1 or state['current_state']==2:
+				if self.string[index] != ' ' :
+					state['collector'] += self.string[index]
 				state['current_state'] = 2;
-		print(state['tag_stack'])
 			#find special tag
 		res = {
 			'begin':-1,
@@ -109,12 +110,21 @@ class SplitCode:
 		}
 		temIndex = -1;
 		for index in range(0,len(state['tag_stack'])):
-			if state['tag_stack'] == name:
-				res['begin'] = index
-			if state['tag_stack'] == '/'+name and res['begin'] != -1:
-				temIndex = index
-		res['end'] = temIndex
-
+			if state['tag_stack'][index]['name'] == name:
+				res['begin'] = state['tag_stack'][index]['begin']
+			if state['tag_stack'][index]['name'] == '/'+name and res['begin'] != -1:
+				temIndex = state['tag_stack'][index]['end']
+				# include '>'
+		res['end'] = temIndex+1;
+		# print state['tag_stack']
 		return res;
 
 		
+
+
+#test
+
+codeset = SplitCode('aaaa< template ><div></div></Template><script>console.log("</script>")</script><style></style>rrr')
+print codeset.get_html()
+print codeset.get_css()
+print codeset.get_js()
