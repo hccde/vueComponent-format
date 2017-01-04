@@ -3,14 +3,60 @@ class HtmlFormat:
 		parse = Parse(html_str)
 		pass;
 
+#todo
+#comment should be used as some new html string
 class Parse:
 	string = ''
 	def __init__(self,html):
 		self.string = rid_tag_space(html);
-		print self.string
+		self.split_tag()
+		#todo /r/n 
 		pass
-		
-
+	def split_tag(self):
+		# state 1:tag opened
+		# state 2:tag name
+		# state 3:tag closed
+		length = len(self.string);
+		state = {
+			'current_state':3,
+			#collect tag name
+			'collector':'',
+			#store splited tag
+			'tag_stack':[]
+		}
+		for index in range(0,length):
+			if self.string[index] =='<' and state['current_state']!=1:
+				if(state['current_state'] == 4):
+					state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
+				else: 
+					state['tag_stack'].append({
+						'name':'',
+						'end':-1,
+						'begin':index,
+						'type':'tag'
+					})
+				state['current_state'] = 1
+			elif self.string[index] == '>' and state['current_state'] == 2:
+				state['current_state'] = 3;
+				state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector'].lower();
+				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
+				state['collector'] = ''
+			elif state['current_state'] == 3:
+				#text node
+				state['tag_stack'].append({
+						'name':'',
+						'end':-1,
+						'begin':index,
+						'type':'text'
+					})	
+				state['collector'] += self.string[index]
+				state['current_state'] = 4
+			elif state['current_state'] == 4:
+				state['collector'] += self.string[index]
+			elif state['current_state']==1 or state['current_state']==2:
+				state['collector'] += self.string[index]
+				state['current_state'] = 2;
+		print state['tag_stack']
 
 def rid_tag_space(raw_str):
 		index = 0;

@@ -96,7 +96,7 @@ class SplitCode:
 
 #test
 
-codeset = SplitCode('aaaa< template ><div><i>hello</i></Div><p></p></Template>'+
+codeset = SplitCode('aaaa< template ><div><i>hello</i></Div></Template>'+
 	'<script>console.log("</script>")</script><style></styLe>rrr')
 # print codeset.get_html()
 # print codeset.get_css()
