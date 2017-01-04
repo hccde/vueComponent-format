@@ -7,15 +7,17 @@ class HtmlFormat:
 #comment should be used as some new html string
 class Parse:
 	string = ''
+	tag_stack = []
 	def __init__(self,html):
 		self.string = rid_tag_space(html);
-		self.split_tag()
+		self.tag_stack = self.split_tag()
 		#todo /r/n 
 		pass
 	def split_tag(self):
 		# state 1:tag opened
 		# state 2:tag name
 		# state 3:tag closed
+		# state 4:text node
 		length = len(self.string);
 		state = {
 			'current_state':3,
@@ -46,6 +48,7 @@ class Parse:
 						continue;
 					else:
 						state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
+						state['tag_stack'][len(state['tag_stack'])-1]['tag'] = 'comment'
 
 				state['current_state'] = 3;
 				state['tag_stack'][len(state['tag_stack'])-1]['name'] = name;
@@ -67,6 +70,9 @@ class Parse:
 				state['collector'] += self.string[index]
 				state['current_state'] = 2;
 		print state['tag_stack']
+
+	def createNode():
+
 
 def rid_tag_space(raw_str):
 		index = 0;
