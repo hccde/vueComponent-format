@@ -28,17 +28,27 @@ class Parse:
 			if self.string[index] =='<' and state['current_state']!=1:
 				if(state['current_state'] == 4):
 					state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
-				else: 
-					state['tag_stack'].append({
-						'name':'',
-						'end':-1,
-						'begin':index,
-						'type':'tag'
-					})
+					state['collector'] = ''
+				
+				state['tag_stack'].append({
+					'name':'',
+					'end':-1,
+					'begin':index,
+					'type':'tag'
+				})
 				state['current_state'] = 1
 			elif self.string[index] == '>' and state['current_state'] == 2:
+				#need to judge if it is a comment node
+				name = state['collector'].lower();
+				if(name.find('!--') == 0):
+					if name[len(name)-1]!='-' or name[len(name)-2]!='-':
+						state['collector'] += self.string[index]
+						continue;
+					else:
+						state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
+
 				state['current_state'] = 3;
-				state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector'].lower();
+				state['tag_stack'][len(state['tag_stack'])-1]['name'] = name;
 				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
 				state['collector'] = ''
 			elif state['current_state'] == 3:
