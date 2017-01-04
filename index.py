@@ -41,37 +41,6 @@ class SplitCode:
 	def get_js(self):
 		Pos = self.get_tag_byname('script')
 		return self.string[Pos['begin']:Pos['end']]
-
-	def rid_tag_space(self,raw_str):
-		index = 0;
-		while True:
-			index = raw_str.find('<',index)
-			if index == -1:
-				break
-
-			space_len = 0;
-			while raw_str[space_len+index+1] == ' ':
-				space_len+=1
-
-			if space_len > 0:
-				raw_str = raw_str[:index+1]+raw_str[index+1+space_len:]
-			index += 1;
-
-		index = 0
-		while True:
-			index = raw_str.find('>',index)
-			if index == -1:
-				break
-			space_len = 0;
-			while raw_str[index-space_len-1] == ' ':
-				space_len+=1
-
-			if space_len > 0:
-				raw_str = raw_str[:index-space_len]+raw_str[index:]
-
-			index+=1
-		return raw_str
-
 		#just for <script> <template> <style>
 		""" 
 			state 0:Null
@@ -127,8 +96,9 @@ class SplitCode:
 
 #test
 
-codeset = SplitCode('aaaa< template ><div></div></Template><script>console.log("</script>")</script><style></style>rrr')
+codeset = SplitCode('aaaa< template ><div><i>hello</i></Div><p></p></Template>'+
+	'<script>console.log("</script>")</script><style></styLe>rrr')
 # print codeset.get_html()
 # print codeset.get_css()
 # print codeset.get_js()
-print Html.HtmlFormat(codeset.get_html())
+Html.HtmlFormat(codeset.get_html())
