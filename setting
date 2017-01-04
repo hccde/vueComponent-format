@@ -2,5 +2,6 @@
 	"tab_size":4,
 	"inline_element":['a','abbr' 'acronym' 'b' 'bdo' 'big' 'br' 'button' 'cite' 'code' 'dfn' 'del' 'em' 'font' 'i' 'img' 'iframe' 'input' 'ins' 'kbd' 'label' 'map' 'object' 'q' 's' 'samp' 'select' 'samll' 'span' 'strike' 'strong' 'sub' 'sup' 'textarea' 'tt' 'u' 'var'],
 	"block_min_width":4,
-	"text_max_width":120
+	"text_max_width":120,
+	"max_attribute_count":4
 }

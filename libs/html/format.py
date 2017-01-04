@@ -8,9 +8,12 @@ class HtmlFormat:
 class Parse:
 	string = ''
 	tag_stack = []
+	node_stack = []
 	def __init__(self,html):
 		self.string = rid_tag_space(html);
 		self.tag_stack = self.split_tag()
+		# self.node_stack = self.create_node()
+		self.create_node('div class=\'test\' value="111" readonly')
 		#todo /r/n 
 		pass
 	def split_tag(self):
@@ -71,7 +74,19 @@ class Parse:
 				state['current_state'] = 2;
 		print state['tag_stack']
 
-	def createNode():
+	def create_node(self,node_str):
+		#attribute
+		#state 1 tag_name
+		#state 2 space
+		#state 3 key
+		#state 4 equal
+		#state 5 value
+		state = {
+			'current_state':3
+		}
+		pass;
+	def create_tree(self):
+		pass
 
 
 def rid_tag_space(raw_str):
