@@ -13,7 +13,7 @@ class Parse:
 		self.string = rid_tag_space(html);
 		self.tag_stack = self.split_tag()
 		# self.node_stack = self.create_node()
-		self.create_node('div class=\'test\' value="111" readonly')
+		self.create_node('div class="test" value="111" required readonly')
 		#todo /r/n 
 		pass
 	def split_tag(self):
@@ -72,18 +72,55 @@ class Parse:
 			elif state['current_state']==1 or state['current_state']==2:
 				state['collector'] += self.string[index]
 				state['current_state'] = 2;
-		print state['tag_stack']
+		# print state['tag_stack']
 
 	def create_node(self,node_str):
 		#attribute
 		#state 1 tag_name
 		#state 2 space
-		#state 3 key
+		#state 3 string
 		#state 4 equal
-		#state 5 value
+		#state 5 begin
 		state = {
-			'current_state':3
+			'current_state':5,
+			'collector':'',
+			'stack':[]
 		}
+		length = len(node_str)
+		for index in range(0,length):
+			if node_str[index] == '=':
+				state['stack'].append(state['collector'])
+				state['collector'] = ''
+				state['stack'].append('=')
+				state['current_state'] = 2;
+				continue
+			elif state['current_state']==5 and node_str[index]==' ':
+				state['stack'].append(state['collector'])
+				state['collector'] = ''
+				state['current_state'] = 2
+				continue
+			elif(state['current_state'] == 5):
+				state['collector'] += node_str[index]
+			elif state['current_state'] == 2 and node_str[index]!=' ':
+				state['collector'] += node_str[index]
+				state['current_state'] = 3
+			elif state['current_state']== 3 and node_str[index]!=' ':
+				state['collector'] += node_str[index]
+			elif state['current_state'] == 3 and node_str[index]==' ':
+				state['stack'].append(state['collector'])
+				state['collector'] = ''
+				state['current_state'] = 2
+		state['stack'].append(state['collector'])
+
+		print(state['stack'])
+
+
+
+
+
+
+
+
 		pass;
 	def create_tree(self):
 		pass
