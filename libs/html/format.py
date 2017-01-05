@@ -13,7 +13,7 @@ class Parse:
 		self.string = rid_tag_space(html);
 		self.tag_stack = self.split_tag()
 		# self.node_stack = self.create_node()
-		self.create_node('div class="test" value="111" required readonly')
+		self.create_node('div readonly class="test=" value=     111 required readonly "name"==a')
 		#todo /r/n 
 		pass
 	def split_tag(self):
@@ -84,16 +84,23 @@ class Parse:
 		state = {
 			'current_state':5,
 			'collector':'',
-			'stack':[]
+			'stack':[],
+			'quotesflag':False
 		}
+		# we should notice value of attribute containe '=' todo
 		length = len(node_str)
 		for index in range(0,length):
-			if node_str[index] == '=':
-				state['stack'].append(state['collector'])
-				state['collector'] = ''
-				state['stack'].append('=')
-				state['current_state'] = 2;
-				continue
+			if node_str[index] == '"' or node_str[index] == "'":
+				state['quotesflag'] = not state['quotesflag']
+			if node_str[index] == '=' and state['current_state'] != 2:
+				if not state['quotesflag']:
+					state['stack'].append(state['collector'])
+					state['collector'] = ''
+					state['stack'].append('=')
+					state['current_state'] = 2;
+					continue
+				else:
+					state['collector'] += node_str[index]
 			elif state['current_state']==5 and node_str[index]==' ':
 				state['stack'].append(state['collector'])
 				state['collector'] = ''
@@ -111,8 +118,22 @@ class Parse:
 				state['collector'] = ''
 				state['current_state'] = 2
 		state['stack'].append(state['collector'])
-
 		print(state['stack'])
+
+		# create dom object
+		# dom_ele = {
+		# 	'name':state['stack'].pop(0)
+		# 	'attribute':{}
+		# }
+		# work_stack = [];
+		# length = len(state['stack']);
+		# for index in range(0,length):
+		# 	current = state['stack'][index]
+		# 	if current != '=':
+		# 		work_stack.append(current)
+		# 	else:
+
+
 
 
 
