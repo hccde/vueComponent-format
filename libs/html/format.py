@@ -121,17 +121,36 @@ class Parse:
 		print(state['stack'])
 
 		# create dom object
-		# dom_ele = {
-		# 	'name':state['stack'].pop(0)
-		# 	'attribute':{}
-		# }
-		# work_stack = [];
-		# length = len(state['stack']);
-		# for index in range(0,length):
-		# 	current = state['stack'][index]
-		# 	if current != '=':
-		# 		work_stack.append(current)
-		# 	else:
+		# use list in case of attributes out of sort
+		dom_ele = {
+			'name':state['stack'].pop(0),
+			'attribute':[]
+		}
+		work_stack = []
+		result_stack=[]
+		index = 0;
+		length = len(state['stack'])
+		while index < length:
+			if state['stack'][index] == '=' and length >= index+1:
+				obj = {
+					work_stack.pop():state['stack'][index+1]
+				}
+				for i in range(0,len(work_stack)):
+					result_stack.append(work_stack[i])
+				result_stack.append(obj)
+				work_stack = []
+				index += 1
+			else:
+				work_stack.append(state['stack'][index])
+				
+			index+=1
+
+		for i in range(0,len(work_stack)):
+			work_stack.append(work_stack[i])
+
+		print result_stack
+		dom_ele['attribute'] = result_stack
+
 
 
 
