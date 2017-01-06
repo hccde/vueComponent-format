@@ -1,8 +1,1 @@
-<template>
-	<div class="hahah" name="congcong" readonly>
-		<p></p>
-	</div>
-</template>
-<script type="text/javascript">
-	
-</script>
+<template><div class="hahah" name="congcong" readonly><p>'\n'</p></div></template><script type="text/javascript"></script>
