@@ -10,11 +10,16 @@ class Parse:
 	tag_stack = []
 	node_stack = []
 	def __init__(self,html):
-		self.string = rid_tag_space(html);
+		self.string = rid_tag_space(html)
 		self.tag_stack = self.split_tag()
+		print html
+		self.node_stack = self.create_node_stack();
+		print self.node_stack
 		# self.node_stack = self.create_node()
-		self.create_node('div readonly class="test=" value=     111 required readonly "name"==a')
+		# self.create_ele_node('div readonly class="test=" value=     111 required readonly "name"==a')
 		#todo /r/n 
+		#todo auto-close tag
+		#todo br tag
 		pass
 	def split_tag(self):
 		# state 1:tag opened
@@ -32,11 +37,11 @@ class Parse:
 		for index in range(0,length):
 			if self.string[index] =='<' and state['current_state']!=1:
 				if(state['current_state'] == 4):
-					state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
+					state['tag_stack'][len(state['tag_stack'])-1]['value'] = state['collector']
 					state['collector'] = ''
 				
 				state['tag_stack'].append({
-					'name':'',
+					'value':'',
 					'end':-1,
 					'begin':index,
 					'type':'tag'
@@ -50,17 +55,17 @@ class Parse:
 						state['collector'] += self.string[index]
 						continue;
 					else:
-						state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector']
-						state['tag_stack'][len(state['tag_stack'])-1]['tag'] = 'comment'
+						state['tag_stack'][len(state['tag_stack'])-1]['value'] = state['collector']
+						state['tag_stack'][len(state['tag_stack'])-1]['type'] = 'comment'
 
 				state['current_state'] = 3;
-				state['tag_stack'][len(state['tag_stack'])-1]['name'] = name;
+				state['tag_stack'][len(state['tag_stack'])-1]['value'] = name;
 				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
 				state['collector'] = ''
 			elif state['current_state'] == 3:
 				#text node
 				state['tag_stack'].append({
-						'name':'',
+						'value':'',
 						'end':-1,
 						'begin':index,
 						'type':'text'
@@ -72,9 +77,40 @@ class Parse:
 			elif state['current_state']==1 or state['current_state']==2:
 				state['collector'] += self.string[index]
 				state['current_state'] = 2;
-		# print state['tag_stack']
+		return state['tag_stack']
 
-	def create_node(self,node_str):
+	def create_node_stack(self):
+		result_stack = []
+		length = len(self.tag_stack)
+		for index in range(0,length):
+			result_stack.append(self.create_node(self.tag_stack[index]))
+		return result_stack
+
+	def create_node(self,obj):
+		if obj['type'] == 'tag':
+			node = self.create_ele_node(obj['value'])
+		elif obj['type'] == 'text':
+			node = self.create_text_node(obj['value'])
+		else:
+			# comments not 
+			node = {
+				'name':obj['type'],
+				'attribute':[],
+				'value':obj['value']
+				}
+		return node
+
+
+
+	def create_text_node(self,text_str):
+		text_ele = {
+			'name':'text',
+			'attribute':[],
+			'value':text_str
+		}
+		return text_ele
+
+	def create_ele_node(self,node_str):
 		#attribute
 		#state 1 tag_name
 		#state 2 space
@@ -87,7 +123,7 @@ class Parse:
 			'stack':[],
 			'quotesflag':False
 		}
-		# we should notice value of attribute containe '=' todo
+		# we should notice value of attribute containe '='
 		length = len(node_str)
 		for index in range(0,length):
 			if node_str[index] == '"' or node_str[index] == "'":
@@ -118,7 +154,6 @@ class Parse:
 				state['collector'] = ''
 				state['current_state'] = 2
 		state['stack'].append(state['collector'])
-		print(state['stack'])
 
 		# create dom object
 		# use list in case of attributes out of sort
@@ -146,10 +181,10 @@ class Parse:
 			index+=1
 
 		for i in range(0,len(work_stack)):
-			work_stack.append(work_stack[i])
+			result_stack.append(work_stack[i])
 
-		print result_stack
 		dom_ele['attribute'] = result_stack
+		return dom_ele;
 
 
 
