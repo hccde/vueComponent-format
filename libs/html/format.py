@@ -1,9 +1,13 @@
+setting ={}
 class HtmlFormat:
-	def __init__(self, html_str):
+	def __init__(self, html_str,settings):
 		# html_str = read_file();
 		# html_str.replace('\r\n','\n').replace('\r','\n')
 		# write_file(html_str)
+		global setting
+		setting = settings;
 		parse = Parse(html_str)
+		Format(parse.node_stack)
 		pass;
 
 #todo
@@ -18,7 +22,7 @@ class Parse:
 		#todo /r/n 
 		self.tag_stack = self.split_tag()
 		self.node_stack = self.create_node_stack();
-		print self.node_stack
+		# print self.node_stack
 		
 	def split_tag(self):
 		# state 1:tag opened
@@ -235,8 +239,43 @@ class Format:
 
 	def __init__(self, node_stack):
 		self.node_stack = node_stack
-	def make_tag_pair():
+		self.format()
+	def make_tag_pair(self):
 		pass
+	#we dont consider unclosed tag at first
+	def format(self):
+		formated_str = ''
+		is_void_ele = False;
+		index_tab = 0;
+		size = setting['tab_size']
+		html_setting = setting['html']
+		work_stack = []
+		for index in range(0,len(self.node_stack)):
+			node_obj = node_stack[index]
+			if self.is_in_list(node_obj['name'],html_setting['blacklist']):
+				#todo  tag name in blacklist 
+				pass;
+			elif self.is_in_list(node_obj['name'],html_setting['noindent'])
+				#should not be indent
+				index-=1;
+				index = (index if index>=0 else 0)
+			elif self.is_in_list(node_obj['name'],html_setting['void_ele']) or node_obj['isVoidEle']:
+				#has no content
+				is_void_ele = True;
+				pass
+			#indent
+			indent = index*size;
+			index+1
+			#work_stack
+
+			#reset 
+			is_void_ele = False
+
+	def is_in_list(self,node_name,arr):
+		for index in range(0,len(arr)):
+			if index == node_name:
+				return True
+		return False
 
 		
 def read_file():

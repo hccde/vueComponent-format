@@ -103,4 +103,4 @@ codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mod
 # print codeset.get_html()
 # print codeset.get_css()
 # print codeset.get_js()
-Html.HtmlFormat(codeset.get_html())
+Html.HtmlFormat(codeset.get_html(),setting)
