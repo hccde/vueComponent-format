@@ -3,6 +3,7 @@
 # import sys
 
 #import html-format module
+import json
 import libs.html.format as Html
 
 #main class
@@ -95,8 +96,9 @@ class SplitCode:
 
 
 #test
+setting = json.load(open('setting','r'))
 
-codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
+codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
 	'<script>console.log("</script>")</script><style></styLe>rrr')
 # print codeset.get_html()
 # print codeset.get_css()

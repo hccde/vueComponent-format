@@ -1,7 +1,9 @@
 class HtmlFormat:
 	def __init__(self, html_str):
+		# html_str = read_file();
+		# html_str.replace('\r\n','\n').replace('\r','\n')
+		# write_file(html_str)
 		parse = Parse(html_str)
-		print test_file().find('\r')
 		pass;
 
 #todo
@@ -16,7 +18,7 @@ class Parse:
 		#todo /r/n 
 		self.tag_stack = self.split_tag()
 		self.node_stack = self.create_node_stack();
-		# print self.node_stack
+		print self.node_stack
 		
 	def split_tag(self):
 		# state 1:tag opened
@@ -124,8 +126,13 @@ class Parse:
 			'current_state':5,
 			'collector':'',
 			'stack':[],
-			'quotesflag':False
+			'quotesflag':False,
+			'isVoidEle':False
 		}
+		#auto closed void element
+		if len(node_str) > 0 and node_str[len(node_str)-1] == '/':
+			state['isVoidEle'] = True
+			node_str = node_str[0:len(node_str)-1]
 		# we should notice value of attribute containe '='
 		length = len(node_str)
 		for index in range(0,length):
@@ -162,7 +169,8 @@ class Parse:
 		# use list in case of attributes out of sort
 		dom_ele = {
 			'name':state['stack'].pop(0),
-			'attribute':[]
+			'attribute':[],
+			'isVoidEle':state['isVoidEle']
 		}
 		work_stack = []
 		result_stack=[]
@@ -229,9 +237,15 @@ class Format:
 		self.node_stack = node_stack
 	def make_tag_pair():
 		pass
+
 		
-def test_file():
+def read_file():
 	#current running script is index.py
 	fs = open('vue-example')
 	html_str = fs.read();
-	return fs.read()
+	fs.close( )
+	return html_str
+def write_file(string):
+	fs = open('vue-example','r+')
+	fs.write(string)
+	fs.close( )
