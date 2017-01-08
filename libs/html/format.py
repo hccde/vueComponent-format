@@ -277,6 +277,11 @@ class Format:
 				return True
 		return False
 
+		#turn node obj to string
+	def node_to_str(self,node):
+		pass
+
+
 		
 def read_file():
 	#current running script is index.py
