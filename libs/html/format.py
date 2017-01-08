@@ -279,8 +279,20 @@ class Format:
 
 		#turn node obj to string
 	def node_to_str(self,node):
-		pass
+		#for void element , like <br/>,turn into <br>
+		length = len(node['attribute'])
+		html_node_string = '<'+node['name']+' ';
+		for index in range(0,length):
+			if type(node['attribute'][index] == 'dict'):
+				#attribute is keyValue form
+				html_node_string += self.attribute_dict_tostr(node['attribute'][index])
+			else:
+				html_node_string += node['attribute'][index]+' ';
+		return html_node_string.rstrip()+'>'
 
+	def attribute_dict_tostr(self,dict_obj):
+		
+		pass
 
 		
 def read_file():
