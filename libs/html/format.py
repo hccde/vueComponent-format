@@ -1,13 +1,13 @@
 setting ={}
 class HtmlFormat:
 	def __init__(self, html_str,settings):
-		# html_str = read_file();
-		# html_str.replace('\r\n','\n').replace('\r','\n')
-		# write_file(html_str)
 		global setting
 		setting = settings;
+		html_str = read_file();
+		html_str = html_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
+		# write_file(html_str)
 		parse = Parse(html_str)
-		Format(parse.node_stack)
+		# Format(parse.node_stack)
 		pass;
 
 #todo
@@ -22,7 +22,7 @@ class Parse:
 		#todo /r/n 
 		self.tag_stack = self.split_tag()
 		self.node_stack = self.create_node_stack();
-		# print self.node_stack
+		print self.node_stack
 		
 	def split_tag(self):
 		# state 1:tag opened
@@ -176,6 +176,7 @@ class Parse:
 			'attribute':[],
 			'isVoidEle':state['isVoidEle']
 		}
+		dom_ele['closeTag'] = dom_ele['name'][0] == '/'
 		work_stack = []
 		result_stack=[]
 		index = 0;
@@ -246,26 +247,27 @@ class Format:
 	def format(self):
 		formated_str = ''
 		is_void_ele = False;
-		index_tab = 0;
+		index_tab = 1;
 		size = setting['tab_size']
 		html_setting = setting['html']
 		work_stack = []
-		for index in range(0,len(self.node_stack)):
+		#need to look after,so length+1 todo
+		for index in range(0,len(self.node_stack)+1):
 			node_obj = node_stack[index]
 			if self.is_in_list(node_obj['name'],html_setting['blacklist']):
 				#todo  tag name in blacklist 
 				pass;
-			elif self.is_in_list(node_obj['name'],html_setting['noindent'])
+			elif self.is_in_list(node_obj['name'],html_setting['noindent']):
 				#should not be indent
-				index-=1;
-				index = (index if index>=0 else 0)
+				index_tab-=1;
+				index_tab = (index_tab if index_tab>=0 else 0)
 			elif self.is_in_list(node_obj['name'],html_setting['void_ele']) or node_obj['isVoidEle']:
 				#has no content
 				is_void_ele = True;
 				pass
 			#indent
-			indent = index*size;
-			index+1
+			indent = index_tab*size;
+			index_tab+=1
 			#work_stack
 
 			#reset 
@@ -291,8 +293,8 @@ class Format:
 		return html_node_string.rstrip()+'>'
 
 	def attribute_dict_tostr(self,dict_obj):
-		
-		pass
+		key_list = dict.keys(dict_obj);
+		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';
 
 		
 def read_file():
