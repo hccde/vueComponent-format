@@ -275,11 +275,15 @@ class Format:
 				index_tab-=1;
 			elif self.is_in_list(node_obj['name'],html_setting['blacklist']):
 				#todo  tag name in blacklist 
+				if( not node_obj['closeTag']):
+					work_stack.append(node_obj['name'])
 				pass;
 			elif self.is_in_list(node_obj['name'],html_setting['noindent']):
 				#should not be indent
 				index_tab-=1;
 				index_tab = (index_tab if index_tab>=0 else 0)
+				if( not node_obj['closeTag'] and node_obj['name'] !='!doctype'):
+					work_stack.append(node_obj['name'])
 			elif self.is_in_list(node_obj['name'],html_setting['void_ele']) or node_obj['isVoidEle']:
 				#has no content
 				is_void_ele = True;
@@ -297,7 +301,7 @@ class Format:
 							value_list[count] = '\n'+(index_tab+1)*size*' '+value_list[count].strip()
 						formated_str+='\n'.join(value_list)
 					else:
-						sigle_line = self.node_stack[index+1]['closeTag'];
+						sigle_line = self.node_stack[index+1]['closeTag'] and self.node_stack[index+1]['name']=='/'+self.node_stack[index-1]['name'];
 						if sigle_line:
 							formated_str+=node_obj['value']
 						else:
@@ -307,6 +311,9 @@ class Format:
 				last_node_type='text'
 			else:
 				if node_obj['closeTag']:
+					#no content element
+					if '/'+self.node_stack[index-1]['name'] == node_obj['name']:
+						sigle_line = True;
 					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
 						work_stack.pop()
 						index_tab-=1
@@ -348,6 +355,8 @@ class Format:
 	def node_to_str(self,node):
 		#for void element , like <br/>,turn into <br>
 		length = len(node['attribute'])
+		if node['name'] == '!doctype':
+			node['name'] = '!Doctype'
 		html_node_string = '<'+node['name']+' ';
 		for index in range(0,length):
 			if type(node['attribute'][index]) == dict:
@@ -359,6 +368,7 @@ class Format:
 		return html_node_string.rstrip()+'>'
 
 	def attribute_dict_tostr(self,dict_obj):
+		#todo long vue attribute
 		key_list = dict.keys(dict_obj);
 		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';
 
