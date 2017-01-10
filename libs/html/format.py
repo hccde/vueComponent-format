@@ -195,7 +195,8 @@ class Parse:
 				work_stack = []
 				index += 1
 			else:
-				work_stack.append(state['stack'][index])
+				if len(state['stack'][index].strip())>0:
+					work_stack.append(state['stack'][index])
 				
 			index+=1
 
@@ -240,7 +241,7 @@ def rid_tag_space(raw_str):
 #todo br tag
 class Format:
 	node_stack = []
-
+	html_setting = {}
 	def __init__(self, node_stack):
 		#remove '/n' '/space' between tags
 		for index in range(0,len(node_stack)):
@@ -259,7 +260,7 @@ class Format:
 		is_void_ele = False;
 		index_tab = 0;
 		size = setting['tab_size']
-		html_setting = setting['html']
+		self.html_setting = html_setting = setting['html']
 		work_stack = []
 		last_node_type='text'
 		sigle_line=False
@@ -318,21 +319,21 @@ class Format:
 						work_stack.pop()
 						index_tab-=1
 						if not sigle_line:
-							formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
+							formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj,(index_tab+1)*size)
 							index_tab-=1
 						else:
-							formated_str+=self.node_to_str(node_obj)
+							formated_str+=self.node_to_str(node_obj,(index_tab+1)*size)
 							index_tab-=1;
 							#whether should be a sigle line
 						sigle_line = False
 					else:
 						#cant match
-						formated_str+=self.node_to_str(node_obj)
+						formated_str+=self.node_to_str(node_obj,(index_tab+1)*size)
 						index_tab-=1;
 					last_node_type = 'closeTag'
 				else:
 					#if forbid Nesting,then should help coders close this tag
-					formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
+					formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj,(index_tab+1)*size)
 					last_node_type = 'openTag'
 					if is_void_ele:
 						index_tab-=1;
@@ -352,18 +353,32 @@ class Format:
 		return False
 
 		#turn node obj to string
-	def node_to_str(self,node):
+	def node_to_str(self,node,space_count):
 		#for void element , like <br/>,turn into <br>
 		length = len(node['attribute'])
+		long_attribute = length >= self.html_setting['max_attribute_count'];
+
 		if node['name'] == '!doctype':
 			node['name'] = '!Doctype'
 		html_node_string = '<'+node['name']+' ';
-		for index in range(0,length):
-			if type(node['attribute'][index]) == dict:
-				#attribute is keyValue form
-				html_node_string += self.attribute_dict_tostr(node['attribute'][index])
+		if length>0:
+			if type(node['attribute'][0]) == dict:
+				html_node_string += self.attribute_dict_tostr(node['attribute'][0])
 			else:
-				html_node_string += node['attribute'][index]+' ';
+				html_node_string += node['attribute'][0]+' '
+
+			for index in range(1,length):
+				if type(node['attribute'][index]) == dict:
+					#attribute is keyValue form
+					if long_attribute:
+						html_node_string +='\n'+(space_count+1)*' '+self.attribute_dict_tostr(node['attribute'][index])
+					else:
+						html_node_string += self.attribute_dict_tostr(node['attribute'][index])
+				else:
+					if long_attribute:
+						html_node_string += '\n'+(space_count+1)*' '+node['attribute'][index]+' '
+					else:
+						html_node_string += node['attribute'][index]+' '
 
 		return html_node_string.rstrip()+'>'
 
