@@ -1,5 +1,2 @@
-<template>
-	<div class="hahah" name="congcong" readonly>
-		<p>'\n'</p>
-	</div>
-</template>
+<template><div class="hahah" name="congcong"      readonly><p>'\n'</p></div></template>
+ 

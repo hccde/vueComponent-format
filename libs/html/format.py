@@ -7,7 +7,7 @@ class HtmlFormat:
 		html_str = html_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
 		# write_file(html_str)
 		parse = Parse(html_str)
-		# Format(parse.node_stack)
+		Format(parse.node_stack)
 		pass;
 
 #todo
@@ -22,7 +22,7 @@ class Parse:
 		#todo /r/n 
 		self.tag_stack = self.split_tag()
 		self.node_stack = self.create_node_stack();
-		print self.node_stack
+		# print self.node_stack
 		
 	def split_tag(self):
 		# state 1:tag opened
@@ -113,7 +113,8 @@ class Parse:
 
 	def create_text_node(self,text_str):
 		text_ele = {
-			'name':'text',
+			'type':'text',
+			'name':'',
 			'attribute':[],
 			'value':text_str
 		}
@@ -172,6 +173,7 @@ class Parse:
 		# create dom object
 		# use list in case of attributes out of sort
 		dom_ele = {
+			'type':'tag',
 			'name':state['stack'].pop(0),
 			'attribute':[],
 			'isVoidEle':state['isVoidEle']
@@ -247,14 +249,23 @@ class Format:
 	def format(self):
 		formated_str = ''
 		is_void_ele = False;
-		index_tab = 1;
+		index_tab = 0;
 		size = setting['tab_size']
 		html_setting = setting['html']
 		work_stack = []
+		last_node_type='text'
+		self.node_stack.insert(0, {'attribute': [], 
+			'closeTag': False, 
+			'name': '', 
+			'isVoidEle': False,
+			'type':'text'})
 		#need to look after,so length+1 todo
-		for index in range(0,len(self.node_stack)+1):
-			node_obj = node_stack[index]
-			if self.is_in_list(node_obj['name'],html_setting['blacklist']):
+		for index in range(1,len(self.node_stack)):
+			node_obj = self.node_stack[index]
+			if node_obj['type'] != 'tag':
+				#not tag,in fact,we should control indent by text length
+				index_tab-=2;
+			elif self.is_in_list(node_obj['name'],html_setting['blacklist']):
 				#todo  tag name in blacklist 
 				pass;
 			elif self.is_in_list(node_obj['name'],html_setting['noindent']):
@@ -265,13 +276,33 @@ class Format:
 				#has no content
 				is_void_ele = True;
 				pass
-			#indent
-			indent = index_tab*size;
+
+
+			if node_obj['type'] == 'text':
+				formated_str+=node_obj['value']
+				last_node_type='text'
+			else:
+				if node_obj['closeTag']:
+					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
+						work_stack.pop()
+						formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
+					if last_node_type == 'closeTag':
+						index_tab-=2
+					else:
+						index_tab-=2
+					last_node_type = 'closeTag'
+				else:
+					formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
+					work_stack.append(node_obj['name'])
+					last_node_type = 'openTag'
 			index_tab+=1
 			#work_stack
 
 			#reset 
 			is_void_ele = False
+		formated_str = formated_str.strip();
+		print formated_str
+		return formated_str
 
 	def is_in_list(self,node_name,arr):
 		for index in range(0,len(arr)):
@@ -285,11 +316,12 @@ class Format:
 		length = len(node['attribute'])
 		html_node_string = '<'+node['name']+' ';
 		for index in range(0,length):
-			if type(node['attribute'][index] == 'dict'):
+			if type(node['attribute'][index]) == dict:
 				#attribute is keyValue form
 				html_node_string += self.attribute_dict_tostr(node['attribute'][index])
 			else:
 				html_node_string += node['attribute'][index]+' ';
+
 		return html_node_string.rstrip()+'>'
 
 	def attribute_dict_tostr(self,dict_obj):
