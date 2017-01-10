@@ -176,7 +176,8 @@ class Parse:
 			'type':'tag',
 			'name':state['stack'].pop(0),
 			'attribute':[],
-			'isVoidEle':state['isVoidEle']
+			'isVoidEle':state['isVoidEle'],
+			'value':''
 		}
 		dom_ele['closeTag'] = dom_ele['name'][0] == '/'
 		work_stack = []
@@ -241,7 +242,14 @@ class Format:
 	node_stack = []
 
 	def __init__(self, node_stack):
-		self.node_stack = node_stack
+		#remove '/n' '/space' between tags
+		for index in range(0,len(node_stack)):
+			node_stack[index]['value'] = node_stack[index]['value'].strip();
+			if(node_stack[index]['type'] !='tag'):
+				if len(node_stack[index]['value']):
+					self.node_stack.append(node_stack[index])
+			else:
+				self.node_stack.append(node_stack[index])
 		self.format()
 	def make_tag_pair(self):
 		pass
@@ -259,7 +267,12 @@ class Format:
 			'name': '', 
 			'isVoidEle': False,
 			'type':'text'})
-		#need to look after,so length+1 todo
+		# self.node_stack.append({'attribute': [], 
+		# 	'closeTag': False, 
+		# 	'name': '', 
+		# 	'isVoidEle': False,
+		# 	'type':'text'})
+		#need to look before,so start form 1
 		for index in range(1,len(self.node_stack)):
 			node_obj = self.node_stack[index]
 			if node_obj['type'] != 'tag':
@@ -338,4 +351,4 @@ def read_file():
 def write_file(string):
 	fs = open('vue-example','r+')
 	fs.write(string)
-	fs.close( )
+	fs.close()
