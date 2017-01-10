@@ -4,6 +4,7 @@
 		"void_ele":["link","br","hr","img","input","meta","area","base","col","command","embed","keygen",
 			"param","source","track","wbr"],
 		"blacklist":["script","link"],
-		"noindent":["!doctype","html","head"]
+		"noindent":["!doctype","html","head"],
+		"max_text_length":50
 	}
 }

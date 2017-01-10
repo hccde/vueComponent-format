@@ -262,6 +262,7 @@ class Format:
 		html_setting = setting['html']
 		work_stack = []
 		last_node_type='text'
+		sigle_line=False
 		self.node_stack.insert(0, {'attribute': [], 
 			'closeTag': False, 
 			'name': '', 
@@ -289,18 +290,34 @@ class Format:
 
 
 			if node_obj['type'] == 'text':
-				formated_str+=node_obj['value']
+				if last_node_type == 'openTag':
+					if (len(node_obj['value']) > html_setting['max_text_length']):
+						value_list =  node_obj['value'].split('\n');
+						for count in range(0,len(value_list)):
+							value_list[count] = '\n'+(index_tab+1)*size*' '+value_list[count].strip()
+						formated_str+='\n'.join(value_list)
+					else:
+						sigle_line = self.node_stack[index+1]['closeTag'];
+						if sigle_line:
+							formated_str+=node_obj['value']
+						else:
+							formated_str+='\n'+(index_tab+1)*size*' '+node_obj['value']
+				else:
+					formated_str+='\n'+(index_tab+1)*size*' '+node_obj['value']
 				last_node_type='text'
 			else:
 				if node_obj['closeTag']:
 					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
 						work_stack.pop()
-						if last_node_type == 'closeTag':
-							index_tab-=2
-						else:
+						index_tab-=1
+						if not sigle_line:
+							formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
 							index_tab-=1
-						formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
-						index_tab-=1;
+						else:
+							formated_str+=self.node_to_str(node_obj)
+							index_tab-=1;
+							#whether should be a sigle line
+						sigle_line = False
 					else:
 						#cant match
 						formated_str+=self.node_to_str(node_obj)
