@@ -267,17 +267,11 @@ class Format:
 			'name': '', 
 			'isVoidEle': False,
 			'type':'text'})
-		# self.node_stack.append({'attribute': [], 
-		# 	'closeTag': False, 
-		# 	'name': '', 
-		# 	'isVoidEle': False,
-		# 	'type':'text'})
-		#need to look before,so start form 1
 		for index in range(1,len(self.node_stack)):
 			node_obj = self.node_stack[index]
 			if node_obj['type'] != 'tag':
 				#not tag,in fact,we should control indent by text length
-				index_tab-=2;
+				index_tab-=1;
 			elif self.is_in_list(node_obj['name'],html_setting['blacklist']):
 				#todo  tag name in blacklist 
 				pass;
@@ -289,6 +283,9 @@ class Format:
 				#has no content
 				is_void_ele = True;
 				pass
+			else:
+				if( not node_obj['closeTag']):
+					work_stack.append(node_obj['name'])
 
 
 			if node_obj['type'] == 'text':
@@ -298,16 +295,23 @@ class Format:
 				if node_obj['closeTag']:
 					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
 						work_stack.pop()
+						if last_node_type == 'closeTag':
+							index_tab-=2
+						else:
+							index_tab-=1
 						formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
-					if last_node_type == 'closeTag':
-						index_tab-=2
+						index_tab-=1;
 					else:
-						index_tab-=2
+						#cant match
+						formated_str+=self.node_to_str(node_obj)
+						index_tab-=1;
 					last_node_type = 'closeTag'
 				else:
+					#if forbid Nesting,then should help coders close this tag
 					formated_str+='\n'+index_tab*size*' '+self.node_to_str(node_obj)
-					work_stack.append(node_obj['name'])
 					last_node_type = 'openTag'
+					if is_void_ele:
+						index_tab-=1;
 			index_tab+=1
 			#work_stack
 
@@ -319,7 +323,7 @@ class Format:
 
 	def is_in_list(self,node_name,arr):
 		for index in range(0,len(arr)):
-			if index == node_name:
+			if arr[index] == node_name:
 				return True
 		return False
 
