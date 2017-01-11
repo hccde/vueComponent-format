@@ -19,16 +19,15 @@ class Parse:
 
 	def __init__(self,html):
 		self.string = rid_tag_space(html)
-		#todo /r/n 
 		self.tag_stack = self.split_tag()
 		self.node_stack = self.create_node_stack();
-		# print self.node_stack
 		
 	def split_tag(self):
 		# state 1:tag opened
 		# state 2:tag name
 		# state 3:tag closed
 		# state 4:text node
+		# state 5:comment node
 		state = {
 			'current_state':3,
 			#collect tag name
@@ -39,18 +38,21 @@ class Parse:
 
 		length = len(self.string);
 		for index in range(0,length):
-			if self.string[index] =='<' and state['current_state']!=1:
+			if self.string[index] =='<':
 				if(state['current_state'] == 4):
 					state['tag_stack'][len(state['tag_stack'])-1]['value'] = state['collector']
 					state['collector'] = ''
-				
-				state['tag_stack'].append({
-					'value':'',
-					'end':-1,
-					'begin':index,
-					'type':'tag'
-				})
-				state['current_state'] = 1
+
+				if state['current_state'] != 2:
+					state['tag_stack'].append({
+						'value':'',
+						'end':-1,
+						'begin':index,
+						'type':'tag'
+					})
+					state['current_state'] = 1
+				else:
+					state['collector'] += self.string[index]
 
 			elif self.string[index] == '>' and state['current_state'] == 2:
 				#need to judge if it is a comment node
@@ -91,6 +93,7 @@ class Parse:
 	def create_node_stack(self):
 		result_stack = []
 		length = len(self.tag_stack)
+		print self.tag_stack
 		for index in range(0,length):
 			result_stack.append(self.create_node(self.tag_stack[index]))
 		return result_stack
@@ -103,9 +106,11 @@ class Parse:
 		else:
 			# comments not 
 			node = {
-				'name':obj['type'],
+				'name':obj['value'],
 				'attribute':[],
-				'value':obj['value']
+				'value':obj['value'],
+				'type':'comment',
+				'closeTag':False
 				}
 		return node
 
@@ -246,6 +251,7 @@ class Format:
 		#remove '/n' '/space' between tags
 		for index in range(0,len(node_stack)):
 			node_stack[index]['value'] = node_stack[index]['value'].strip();
+			print node_stack[index]
 			if(node_stack[index]['type'] !='tag'):
 				if len(node_stack[index]['value']):
 					self.node_stack.append(node_stack[index])
