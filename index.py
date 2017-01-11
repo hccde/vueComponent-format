@@ -101,8 +101,11 @@ setting = json.load(open('setting','r'))
 
 codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
 	'<script>console.log("</script>")</script><style>.title{color:red;}</styLe>rrr')
+
+#todo different input need to be pointed out
+
 # print codeset.get_html()
 # print codeset.get_css()
 # print codeset.get_js()
-Html.HtmlFormat(codeset.get_html(),setting)
-# Css.CssFormat(codeset.get_css(),setting)
+# Html.HtmlFormat(codeset.get_html(),setting)
+Css.CssFormat(codeset.get_css(),setting)

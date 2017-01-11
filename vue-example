@@ -1,16 +1,6 @@
-						<!Doctype html>
-						<html>
-						<head></head>
-						<template>
-							<div class="<" name="congcong"  
-							  v-model="hahah" :click=""  readonly>
-
-							</div><div class="hahah" name="congcong"      readonly>
-							hahahhhahahhhahahhhahahhha
-							hahhhahahhhahahhhahahhhahahhhahahhh      ahahhhahahhhahahhhahahhhahahhhahahh
-								<!-- <p>'\n'</p> -->
-								<br/>
-								<meta href="">
-							</div>
-			</template>
-			</html>
+.title{
+	color:red;
+	.name .title{
+		color:black
+	}
+}
