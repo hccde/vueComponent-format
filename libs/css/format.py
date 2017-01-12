@@ -16,19 +16,28 @@ class Paser(object):
 		length = len(self.strings)
 		string = self.string
 		brace_stack=[];
-		
+		# save the current nestting deepth
+		nest_stack=[];
 		state = {
 			collector:'',
 			state:'1'
 		}
 		obj = {
 			selector:'',
+			csslist:[]
 
 			# child
 		}
 		for index in range(0,length):
 			if string[index]=='{' and state['state']==1:
+				obj['selector'] = state['collector'];
+				state['state'] = 1
+			elif state['state'] == 1 and string[index] == ';':
+				#one csslist is found
 				pass
+
+
+
 				
 		
 		
