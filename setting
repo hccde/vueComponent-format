@@ -7,5 +7,11 @@
 		"noindent":["!doctype","html","head"],
 		"max_text_length":50,
 		"max_attribute_count":5
+	},
+	"css":{
+		
+	},
+	"js":{
+
 	}
 }

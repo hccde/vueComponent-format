@@ -1,3 +1,4 @@
+#if css string is not vaild ,we will not format it 
 class CssFormat:
 	def __init__(self, css_str,setting):
 		css_str = read_file()
@@ -15,7 +16,7 @@ class Paser(object):
 	def get_css_obj(self):
 		length = len(self.strings)
 		string = self.string
-		brace_stack=[];
+		# brace_stack=[];
 		# save the current nestting deepth
 		nest_stack=[];
 		state = {
@@ -30,11 +31,15 @@ class Paser(object):
 		}
 		for index in range(0,length):
 			if string[index]=='{' and state['state']==1:
+				# is a classList,should new a classList obj and push into nest_stack
 				obj['selector'] = state['collector'];
 				state['state'] = 1
 			elif state['state'] == 1 and string[index] == ';':
 				#one csslist is found
+				# obj[]
 				pass
+			elif state['state'] == 1 and string[index] == '}':
+				# current classList is over
 
 
 
