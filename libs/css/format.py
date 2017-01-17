@@ -54,6 +54,12 @@ class Paser:
 				#one csslist is found
 			elif string[index] == '}':
 				if(state['collector'].strip() != ''):
+					
+
+
+
+
+
 					current_style_obj["classList"].append(state['collector'])
 				state['collector'] = ''
 				work_stack.pop()
@@ -69,7 +75,10 @@ class Paser:
 				pass;
 
 		print nest_stack;
-		
+
+class Format:
+	def __init__(self,token_stack):
+		pass
 		
 
 
