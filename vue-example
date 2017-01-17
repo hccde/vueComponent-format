@@ -1,6 +1,1 @@
-.title{
-	color:red;
-	.name .title{
-		color:black
-	}
-}
+.title{color:red;.name .title{color:black;}}
