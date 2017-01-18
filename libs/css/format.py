@@ -32,10 +32,28 @@ class Paser:
 			'doublequoteFlag':False
 		}
 		for index in range(0,length-1):
-			if state['state'] >=7:
+			if string[index] == '*' and string[index+1] == '/' and state['state'] == 8:
+				# /* comment closed
+				if current_style_obj != '':
+					current_style_obj['classList'].append(state['collector'])
+				else:
+					nest_stack.append(state['collector'])
+				state['collector'] = '';
+
+				state['state'] = 1;
+			elif string[index] == '\n' and state['state'] == 7:
+				# /* comment closed
+				print 333
+				if current_style_obj != '':
+					current_style_obj['classList'].append(state['collector'])
+				else:
+					nest_stack.append(state['collector'])
+				state['collector'] = '';
+
+				state['state'] == 1;
+			elif state['state'] >=7:
 				# comment begin
 				state['collector']+=string[index];
-				pass;
 			elif string[index]=='{' :
 				# is a styleList,should new a styleList obj and push into nest_stack
 				new_style_obj = {
@@ -71,32 +89,16 @@ class Paser:
 				else:
 					current_style_obj = ''
 				state['state'] = 2
-			elif string[index] == '/' and string[index+1] == '/' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']):
+			elif string[index] == '/' and string[index+1] == '/' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']==False):
 				# // comment
-				state['state'] == 7
-				pass
-			elif string[index] == '/' and string[index+1] == '*' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']):
+				index+=1
+				state['collector']+='//'
+				state['state'] = 7
+			elif string[index] == '/' and string[index+1] == '*' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']==False):
 				# /* comment
-				state['state'] == 8
-				pass
-			elif string[index] == '*' and string[index+1] == '/' and state['state'] == 8:
-				# /* comment closed
-				if current_style_obj != '':
-					current_style_obj['classList'].append(state['collector'])
-				else:
-					nest_stack.append(state['collector'])
-				state['collector'] = '';
-
-				state['state'] == 1;
-			elif string[index] == '\n' and state['state'] == 7:
-				# /* comment closed
-				if current_style_obj != '':
-					current_style_obj['classList'].append(state['collector'])
-				else:
-					nest_stack.append(state['collector'])
-				state['collector'] = '';
-
-				state['state'] == 1;
+				index+=1;
+				state['collector']+='//'
+				state['state'] = 8
 			else:
 				if string[index] == "'":
 					state['siglequoteFlag'] = not state['siglequoteFlag']

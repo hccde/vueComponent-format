@@ -1,1 +1,11 @@
-.title{color:red;.name .title{color:black;}}color:white;.test{font-size:14px;}
+.title{
+	color:red;
+	.name .title{
+		color:black;
+	}
+}
+//background-color:{red}
+color:white;
+.test{
+	font-size:14px;
+}
