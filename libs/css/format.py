@@ -1,8 +1,12 @@
 #if css string is not vaild ,we will not format it 
 class CssFormat:
-	def __init__(self, css_str,setting):
+	def __init__(self, css_str,settings):
 		css_str = read_file()
+		css_str = css_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
 		parse = Paser(css_str)
+		format_css = Format(parse.css_stack);
+		global setting
+		setting = settings;
 		# print css_str
 
 class Paser:
@@ -13,10 +17,11 @@ class Paser:
 	#state 7 'sigle line comment'
 	#state 8 'multi-line comment'
 	strings=''
+	css_stack = []
 	#comment css todo
 	def __init__(self, css_str):
 		self.strings = css_str.strip()
-		self.get_css_obj()
+		self.css_stack = self.get_css_obj()
 	def get_css_obj(self):
 		length = len(self.strings)
 		string = self.strings+' '
@@ -43,7 +48,6 @@ class Paser:
 				state['state'] = 1;
 			elif string[index] == '\n' and state['state'] == 7:
 				# /* comment closed
-				print 333
 				if current_style_obj != '':
 					current_style_obj['classList'].append(state['collector'])
 				else:
@@ -107,12 +111,25 @@ class Paser:
 				state['collector']+=string[index];
 				state['state'] = 1;
 				pass;
-
-		print nest_stack;
+		return nest_stack;
 
 class Format:
+	css_stack = []
 	def __init__(self,token_stack):
+		print token_stack;
+		self.css_stack = token_stack;
 		pass
+	def format_css(self):
+		length = len(self.css_stack);
+		for index in range(0,length):
+			if type(self.css_stack[index]) == dict:
+				#nested
+
+				pass
+			else:
+				pass
+	
+
 		
 
 
