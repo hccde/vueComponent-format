@@ -10,13 +10,16 @@ class Paser:
 	#state 1 string
 	#state 2 '}'
 	#state 3 ';'
+	#state 7 'sigle line comment'
+	#state 8 'multi-line comment'
 	strings=''
+	#comment css todo
 	def __init__(self, css_str):
 		self.strings = css_str.strip()
 		self.get_css_obj()
 	def get_css_obj(self):
 		length = len(self.strings)
-		string = self.strings
+		string = self.strings+' '
 		# brace_stack=[];
 		# save the current nestting deepth
 		nest_stack=[]
@@ -24,10 +27,16 @@ class Paser:
 		current_style_obj = ''
 		state = {
 			'collector':'',
-			'state':1
+			'state':1,
+			'siglequoteFlag':False,
+			'doublequoteFlag':False
 		}
-		for index in range(0,length):
-			if string[index]=='{' :
+		for index in range(0,length-1):
+			if state['state'] >=7:
+				# comment begin
+				state['collector']+=string[index];
+				pass;
+			elif string[index]=='{' :
 				# is a styleList,should new a styleList obj and push into nest_stack
 				new_style_obj = {
 						"name":state['collector'],
@@ -54,12 +63,6 @@ class Paser:
 				#one csslist is found
 			elif string[index] == '}':
 				if(state['collector'].strip() != ''):
-					
-
-
-
-
-
 					current_style_obj["classList"].append(state['collector'])
 				state['collector'] = ''
 				work_stack.pop()
@@ -68,8 +71,37 @@ class Paser:
 				else:
 					current_style_obj = ''
 				state['state'] = 2
+			elif string[index] == '/' and string[index+1] == '/' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']):
+				# // comment
+				state['state'] == 7
 				pass
+			elif string[index] == '/' and string[index+1] == '*' and (state['siglequoteFlag']==False) and (state['doublequoteFlag']):
+				# /* comment
+				state['state'] == 8
+				pass
+			elif string[index] == '*' and string[index+1] == '/' and state['state'] == 8:
+				# /* comment closed
+				if current_style_obj != '':
+					current_style_obj['classList'].append(state['collector'])
+				else:
+					nest_stack.append(state['collector'])
+				state['collector'] = '';
+
+				state['state'] == 1;
+			elif string[index] == '\n' and state['state'] == 7:
+				# /* comment closed
+				if current_style_obj != '':
+					current_style_obj['classList'].append(state['collector'])
+				else:
+					nest_stack.append(state['collector'])
+				state['collector'] = '';
+
+				state['state'] == 1;
 			else:
+				if string[index] == "'":
+					state['siglequoteFlag'] = not state['siglequoteFlag']
+				if string[index] == '"':
+					state['doublequoteFlag'] = not state['doublequoteFlag']
 				state['collector']+=string[index];
 				state['state'] = 1;
 				pass;
