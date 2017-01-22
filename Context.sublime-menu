@@ -1,0 +1,7 @@
+[
+    { 
+    	"id": "vueformatmenu",
+    	"command": "format",
+    	"caption": "VueFormat"
+    }
+]

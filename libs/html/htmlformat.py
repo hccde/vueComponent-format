@@ -3,10 +3,10 @@ class HtmlFormat:
 	def __init__(self, html_str,settings):
 		global setting
 		setting = settings;
-		html_str = read_file();
 		html_str = html_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
 		# write_file(html_str)
 		parse = Parse(html_str)
+		print(parse.node_stack)
 		Format(parse.node_stack)
 		pass;
 
@@ -93,7 +93,7 @@ class Parse:
 	def create_node_stack(self):
 		result_stack = []
 		length = len(self.tag_stack)
-		print self.tag_stack
+		print(self.tag_stack)
 		for index in range(0,length):
 			result_stack.append(self.create_node(self.tag_stack[index]))
 		return result_stack
@@ -251,7 +251,7 @@ class Format:
 		#remove '/n' '/space' between tags
 		for index in range(0,len(node_stack)):
 			node_stack[index]['value'] = node_stack[index]['value'].strip();
-			print node_stack[index]
+			print(node_stack[index])
 			if(node_stack[index]['type'] !='tag'):
 				if len(node_stack[index]['value']):
 					self.node_stack.append(node_stack[index])
@@ -349,7 +349,7 @@ class Format:
 			#reset 
 			is_void_ele = False
 		formated_str = formated_str.strip();
-		print formated_str
+		print(formated_str)
 		return formated_str
 
 	def is_in_list(self,node_name,arr):
@@ -392,15 +392,3 @@ class Format:
 		#todo long vue attribute
 		key_list = dict.keys(dict_obj);
 		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';
-
-		
-def read_file():
-	#current running script is index.py
-	fs = open('vue-example')
-	html_str = fs.read();
-	fs.close( )
-	return html_str
-def write_file(string):
-	fs = open('vue-example','r+')
-	fs.write(string)
-	fs.close()

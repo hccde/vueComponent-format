@@ -127,7 +127,7 @@ class Format:
 				pass
 			else:
 				string+=index_tab*' '*tab_size+self.css_stack[index].strip()+'\n'
-		print string
+		print(string)
 
 	def format_css_dict(self,css_obj,index_tab,string):
 		string += index_tab*' '*self.setting['tab_size']+css_obj['name'].strip()+' {'+'\n'

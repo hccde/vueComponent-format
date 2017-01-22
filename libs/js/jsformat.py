@@ -16,6 +16,6 @@ class JsFormat:
         options.brace_style = 'collapse'
         options.indent_level = 0
         self.options = options
-        print self.format()
+        print(self.format())
     def format(self):
         return jsbeautifier.beautify(self.js_str, self.options)

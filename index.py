@@ -1,22 +1,27 @@
-# import sublime
-# import sublime_plugin
-# import sys
-
-#import html-format module
+import sublime
+import sublime_plugin
+import sys
+import os
 import json
-import libs.html.format as Html
-import libs.css.format as Css
-import libs.js.format as Js
+from .libs.html import htmlformat
+from .libs.css import cssformat
+from .libs.js import jsformat
 
-#main class
-# class FormatCommand(sublime_plugin.TextCommand):
-    # def run(self, edit):
-    	#get the first selection
-    	# selection = self.view.sel()[0];
-    	# selection_str = self.view.substr(selection)
-    	# code_set = SplitCode(selection_str)
-    	# selection_str = code_set.get_html()
-    	#replace string 
+class FormatCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+    	print(111)
+    	# get the first selection
+    	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
+    	selection = self.view.sel()[0];
+    	selection_str = self.view.substr(selection)
+    	code_set = SplitCode(selection_str)
+    	html_str = code_set.get_html()
+    	print(htmlformat.HtmlFormat(html_str,setting))
+    	# Html.HtmlFormat(codeset.get_html(),setting)
+		# Css.CssFormat(codeset.get_css(),setting)
+		# Js.JsFormat('',setting)
+
+    	# replace string 
     	# self.view.replace(edit,selection,selection_str)
 
 
@@ -28,11 +33,6 @@ class SplitCode:
 		self.string = raw_str;
 		self.string_len = len(self.string)
 		pass
-
-#TODO : if code has string contain'</script>',like 
-	#console.log('</script>')
-#we will get error position,must consider this problem
-#for this problem,we can solve it by always get the last its closed tag which is the outer tag
 	def get_html(self):
 		Pos = self.get_tag_byname('template')
 		return self.string[Pos['begin']:Pos['end']]
@@ -98,10 +98,10 @@ class SplitCode:
 
 
 #test
-setting = json.load(open('setting','r'))
+# setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
 
-codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
-	'<script>console.log("</script>")</script><style>.title{color:red;}</styLe>rrr')
+# codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
+	# '<script>console.log("</script>")</script><style>.title{color:red;}</styLe>rrr')
 
 #todo different input need to be pointed out
 
@@ -110,5 +110,5 @@ codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mod
 # print codeset.get_js()
 # Html.HtmlFormat(codeset.get_html(),setting)
 # Css.CssFormat(codeset.get_css(),setting)
-Js.JsFormat('',setting)
+# Js.JsFormat('',setting)
 
