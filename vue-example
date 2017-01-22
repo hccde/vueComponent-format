@@ -2,10 +2,19 @@
 	color:red;
 	.name .title{
 		color:black;
+		font-size:14px;
+/* 
+			hahahah 
+		*/
+		.haha{
+		background-color:red;
+			p{
+			font-size:0px;
+			}
+		}
 	}
 }
-//background-color:{red}
+//background-color:{re
 color:white;
-.test{
-	font-size:14px;
+.test{font-size:14px;
 }
