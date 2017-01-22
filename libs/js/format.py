@@ -1,7 +1,7 @@
 import jsbeautifier
 
 #format js string 
-class CssFormat:
+class JsFormat:
     options={}
     js_str = ''
     def __init__(self, js_str,settings):
@@ -16,6 +16,6 @@ class CssFormat:
         options.brace_style = 'collapse'
         options.indent_level = 0
         self.options = options
-        self.format()
+        print self.format()
     def format(self):
         return jsbeautifier.beautify(self.js_str, self.options)

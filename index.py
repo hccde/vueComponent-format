@@ -6,6 +6,7 @@
 import json
 import libs.html.format as Html
 import libs.css.format as Css
+import libs.js.format as Js
 
 #main class
 # class FormatCommand(sublime_plugin.TextCommand):
@@ -108,4 +109,6 @@ codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mod
 # print codeset.get_css()
 # print codeset.get_js()
 # Html.HtmlFormat(codeset.get_html(),setting)
-Css.CssFormat(codeset.get_css(),setting)
+# Css.CssFormat(codeset.get_css(),setting)
+Js.JsFormat('',setting)
+
