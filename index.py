@@ -6,25 +6,49 @@ import json
 from .libs.html import htmlformat
 from .libs.css import cssformat
 from .libs.js import jsformat
-
+css_html_js = []
 class FormatCommand(sublime_plugin.TextCommand):
     def run(self, edit):
     	print(111)
     	# get the first selection
+    	global css_html_js
     	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
     	selection = self.view.sel()[0];
     	selection_str = self.view.substr(selection)
     	code_set = SplitCode(selection_str)
     	html_str = code_set.get_html()
-    	print(htmlformat.HtmlFormat(html_str,setting))
+    	print(css_html_js)
+    	# print(htmlformat.HtmlFormat(html_str,setting))
     	# Html.HtmlFormat(codeset.get_html(),setting)
 		# Css.CssFormat(codeset.get_css(),setting)
-		# Js.JsFormat('',setting)
+		# Js.JsFormat('',setting);
 
     	# replace string 
     	# self.view.replace(edit,selection,selection_str)
-
-
+class FormatEvent(sublime_plugin.EventListener):
+	def run(self,view):
+		pass
+	def on_post_save(self,view):
+		pass
+	def on_modified(self,view):
+		global css_html_js
+		size = view.size()
+		selection =  sublime.Region(0,size);
+		selection_str =  view.substr(selection)
+		code_set = SplitCode(selection_str)
+		css_html_js.append(code_set.get_css())
+		css_html_js.append(code_set.get_html())
+		css_html_js.append(code_set.get_js())
+	def on_activated(self,view):
+		global css_html_js
+		size = view.size()
+		selection =  sublime.Region(0,size);
+		selection_str =  view.substr(selection)
+		code_set = SplitCode(selection_str)
+		css_html_js.append(code_set.get_css())
+		css_html_js.append(code_set.get_html())
+		css_html_js.append(code_set.get_js())
+		
 class SplitCode:
 	string = '';
 	string_len = 0;
@@ -75,8 +99,8 @@ class SplitCode:
 				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
 				state['collector'] = ''
 			elif state['current_state']==1 or state['current_state']==2:
-				if self.string[index] != ' ' :
-					state['collector'] += self.string[index]
+				# if self.string[index] != ' ' :
+				state['collector'] += self.string[index]
 				state['current_state'] = 2;
 			#find special tag
 		res = {
@@ -85,13 +109,20 @@ class SplitCode:
 		}
 		temIndex = -1;
 		for index in range(0,len(state['tag_stack'])):
-			if state['tag_stack'][index]['name'] == name:
+			raw_name = state['tag_stack'][index]['name']
+			split_name_space = raw_name.split(' ')[0]
+			split_name_enter = raw_name.split('\n')[0]
+			names = raw_name
+			if(split_name_space != raw_name):
+				names = split_name_space
+			if(split_name_enter != raw_name):
+				names = split_name_enter
+			if names == name:
 				res['begin'] = state['tag_stack'][index]['begin']
-			if state['tag_stack'][index]['name'] == '/'+name and res['begin'] != -1:
+			if names == '/'+name and res['begin'] != -1:
 				temIndex = state['tag_stack'][index]['end']
 				# include '>'
 		res['end'] = temIndex+1;
-		# print state['tag_stack']
 		return res;
 
 		
@@ -101,7 +132,7 @@ class SplitCode:
 # setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
 
 # codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
-	# '<script>console.log("</script>")</script><style>.title{color:red;}</styLe>rrr')
+	# '<script>console.log("</script>")</script><style type="text">.title{color:red;}</styLe>rrr')
 
 #todo different input need to be pointed out
 
