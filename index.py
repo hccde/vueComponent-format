@@ -14,9 +14,7 @@ class FormatCommand(sublime_plugin.TextCommand):
     	global css_html_js
     	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
     	selection = self.view.sel()[0];
-    	selection_str = self.view.substr(selection)
-    	code_set = SplitCode(selection_str)
-    	html_str = code_set.get_html()
+    	# selection_str = self.view.substr(selection)
     	print(css_html_js)
     	# print(htmlformat.HtmlFormat(html_str,setting))
     	# Html.HtmlFormat(codeset.get_html(),setting)
@@ -32,6 +30,7 @@ class FormatEvent(sublime_plugin.EventListener):
 		pass
 	def on_modified(self,view):
 		global css_html_js
+		css_html_js = []
 		size = view.size()
 		selection =  sublime.Region(0,size);
 		selection_str =  view.substr(selection)
@@ -41,6 +40,7 @@ class FormatEvent(sublime_plugin.EventListener):
 		css_html_js.append(code_set.get_js())
 	def on_activated(self,view):
 		global css_html_js
+		css_html_js = []
 		size = view.size()
 		selection =  sublime.Region(0,size);
 		selection_str =  view.substr(selection)
@@ -48,7 +48,7 @@ class FormatEvent(sublime_plugin.EventListener):
 		css_html_js.append(code_set.get_css())
 		css_html_js.append(code_set.get_html())
 		css_html_js.append(code_set.get_js())
-		
+
 class SplitCode:
 	string = '';
 	string_len = 0;
@@ -59,15 +59,18 @@ class SplitCode:
 		pass
 	def get_html(self):
 		Pos = self.get_tag_byname('template')
-		return self.string[Pos['begin']:Pos['end']]
+		# return self.string[Pos['begin']:Pos['end']]
+		return Pos
 
 	def get_css(self):
 		Pos = self.get_tag_byname('style')
-		return self.string[Pos['begin']:Pos['end']]
+		# return self.string[Pos['begin']:Pos['end']]
+		return Pos
 
 	def get_js(self):
 		Pos = self.get_tag_byname('script')
-		return self.string[Pos['begin']:Pos['end']]
+		# return self.string[Pos['begin']:Pos['end']]
+		return Pos
 		#just for <script> <template> <style>
 		""" 
 			state 0:Null
@@ -111,12 +114,15 @@ class SplitCode:
 		for index in range(0,len(state['tag_stack'])):
 			raw_name = state['tag_stack'][index]['name']
 			split_name_space = raw_name.split(' ')[0]
+			split_name_table = raw_name.split('	')[0]
 			split_name_enter = raw_name.split('\n')[0]
 			names = raw_name
 			if(split_name_space != raw_name):
 				names = split_name_space
 			if(split_name_enter != raw_name):
 				names = split_name_enter
+			if(split_name_table != raw_name):
+				names = split_name_table
 			if names == name:
 				res['begin'] = state['tag_stack'][index]['begin']
 			if names == '/'+name and res['begin'] != -1:
