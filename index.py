@@ -6,15 +6,26 @@ import json
 from .libs.html import htmlformat
 from .libs.css import cssformat
 from .libs.js import jsformat
+<<<<<<< HEAD
 css_html_js = [{'begin':0,'end':0},{'begin':0,'end':0},{'begin':0,'end':0}]
+=======
+css_html_js = []
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
 class FormatCommand(sublime_plugin.TextCommand):
     def run(self, edit):
     	# get the first selection
     	global css_html_js
+<<<<<<< HEAD
     	selection = self.view.sel()[0];
     	# selection_str = self.view.substr(selection)
     	# print(css_html_js)
     	self.dispatch(selection)
+=======
+    	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
+    	selection = self.view.sel()[0];
+    	# selection_str = self.view.substr(selection)
+    	print(css_html_js)
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
     	# print(htmlformat.HtmlFormat(html_str,setting))
     	# Html.HtmlFormat(codeset.get_html(),setting)
 		# Css.CssFormat(codeset.get_css(),setting)
@@ -22,6 +33,7 @@ class FormatCommand(sublime_plugin.TextCommand):
 
     	# replace string 
     	# self.view.replace(edit,selection,selection_str)
+<<<<<<< HEAD
     def dispatch(self,reg):
     	global css_html_js
     	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
@@ -69,6 +81,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     	return formated_str;
 
 
+=======
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
 class FormatEvent(sublime_plugin.EventListener):
 	def run(self,view):
 		pass
@@ -76,7 +90,11 @@ class FormatEvent(sublime_plugin.EventListener):
 		pass
 	def on_modified(self,view):
 		global css_html_js
+<<<<<<< HEAD
 		css_html_js = [{'begin':0,'end':0},{'begin':0,'end':0},{'begin':0,'end':0}]
+=======
+		css_html_js = []
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
 		size = view.size()
 		selection =  sublime.Region(0,size);
 		selection_str =  view.substr(selection)
@@ -84,7 +102,10 @@ class FormatEvent(sublime_plugin.EventListener):
 		css_html_js.append(code_set.get_css())
 		css_html_js.append(code_set.get_html())
 		css_html_js.append(code_set.get_js())
+<<<<<<< HEAD
 		css_html_js.append(selection_str)
+=======
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
 	def on_activated(self,view):
 		global css_html_js
 		css_html_js = []
@@ -95,7 +116,10 @@ class FormatEvent(sublime_plugin.EventListener):
 		css_html_js.append(code_set.get_css())
 		css_html_js.append(code_set.get_html())
 		css_html_js.append(code_set.get_js())
+<<<<<<< HEAD
 		css_html_js.append(selection_str)
+=======
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
 
 class SplitCode:
 	string = '';
@@ -178,3 +202,25 @@ class SplitCode:
 				# include '>'
 		res['end'] = temIndex+1;
 		return res;
+<<<<<<< HEAD
+=======
+
+		
+
+
+#test
+# setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
+
+# codeset = SplitCode('aaaa< template ><input type="mail" readonly required :v-mode="mail"></input><br /><div>\r\n</div><i class="title">hello </i><!-- <div>--></Div></Template>'+
+	# '<script>console.log("</script>")</script><style type="text">.title{color:red;}</styLe>rrr')
+
+#todo different input need to be pointed out
+
+# print codeset.get_html()
+# print codeset.get_css()
+# print codeset.get_js()
+# Html.HtmlFormat(codeset.get_html(),setting)
+# Css.CssFormat(codeset.get_css(),setting)
+# Js.JsFormat('',setting)
+
+>>>>>>> 47dee17617c617135d69173d34fde86c1f13a914
