@@ -1,13 +1,14 @@
 setting ={}
 class HtmlFormat:
+	formated_str = ''
 	def __init__(self, html_str,settings):
 		global setting
 		setting = settings;
 		html_str = html_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
 		# write_file(html_str)
 		parse = Parse(html_str)
-		print(parse.node_stack)
-		Format(parse.node_stack)
+		html_format =  Format(parse.node_stack)
+		self.formated_str = html_format.format()
 		pass;
 
 #todo
@@ -93,7 +94,6 @@ class Parse:
 	def create_node_stack(self):
 		result_stack = []
 		length = len(self.tag_stack)
-		print(self.tag_stack)
 		for index in range(0,length):
 			result_stack.append(self.create_node(self.tag_stack[index]))
 		return result_stack
@@ -251,13 +251,12 @@ class Format:
 		#remove '/n' '/space' between tags
 		for index in range(0,len(node_stack)):
 			node_stack[index]['value'] = node_stack[index]['value'].strip();
-			print(node_stack[index])
 			if(node_stack[index]['type'] !='tag'):
 				if len(node_stack[index]['value']):
 					self.node_stack.append(node_stack[index])
 			else:
 				self.node_stack.append(node_stack[index])
-		self.format()
+		# self.format()
 	def make_tag_pair(self):
 		pass
 	#we dont consider unclosed tag at first
@@ -274,7 +273,9 @@ class Format:
 			'closeTag': False, 
 			'name': '', 
 			'isVoidEle': False,
-			'type':'text'})
+			'type':'text',
+			'value':''
+			})
 		for index in range(1,len(self.node_stack)):
 			node_obj = self.node_stack[index]
 			if node_obj['type'] != 'tag':
@@ -314,6 +315,7 @@ class Format:
 						else:
 							formated_str+='\n'+(index_tab+1)*size*' '+node_obj['value']
 				else:
+					print(node_obj)
 					formated_str+='\n'+(index_tab+1)*size*' '+node_obj['value']
 				last_node_type='text'
 			else:
@@ -321,7 +323,7 @@ class Format:
 					#no content element
 					if '/'+self.node_stack[index-1]['name'] == node_obj['name']:
 						sigle_line = True;
-					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
+					if len(work_stack)-1 >= 0 and '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
 						work_stack.pop()
 						index_tab-=1
 						if not sigle_line:
@@ -349,7 +351,6 @@ class Format:
 			#reset 
 			is_void_ele = False
 		formated_str = formated_str.strip();
-		print(formated_str)
 		return formated_str
 
 	def is_in_list(self,node_name,arr):
@@ -390,5 +391,5 @@ class Format:
 
 	def attribute_dict_tostr(self,dict_obj):
 		#todo long vue attribute
-		key_list = dict.keys(dict_obj);
+		key_list = list(dict.keys(dict_obj))
 		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';

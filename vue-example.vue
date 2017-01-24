@@ -1,10 +1,9 @@
-<style type="text/css">
+<style type="text">
 	.popup{
 		width: rem(600);
 		height: rem(600);
 		background-color:white;
-		overflow: auto;
-		.question{
+		overflow: auto;.question{
 			padding-left:rem(30);
 			display: flex;
 			align-items:center;
@@ -14,7 +13,7 @@
 			padding-bottom:rem(34);
 		}
 		ul{
-			width: 100%;
+			width: 100%
 			height: auto;
 			padding-left:rem(30);
 			padding-right:rem(30);
@@ -35,8 +34,7 @@
 	}
 </style>
 <template>
-	<div class="activity-detail">
-    <ul class="flexbox-parent detail-section statistics"><li class="flexbox-child">报名<br>{{ signedCount }}</li>
+	<div class="activity-detail"><ul class="flexbox-parent detail-section statistics"><li class="flexbox-child">报名<br>{{ signedCount }}</li>
       <li class="flexbox-child">阅读<br>{{ readedCount }}</li>
       <!-- <li class="flexbox-child">分享<br>{{ sharedCount }}</li> -->
       <li class="flexbox-child">评论<br>{{ commentCount }}</li>
@@ -50,6 +48,9 @@
     <interaction-block :component-list="shareList"></interaction-block>
   </div>
 </template>
+
+
+
 <script type="text/javascript">
 import { string2Array } from '../../helpers/util';
 
