@@ -1,12 +1,10 @@
 #if css string is not vaild ,we will not format it 
 class CssFormat:
-	def __init__(self, css_str,settings):
-		css_str = read_file()
+	def __init__(self, css_str,settings,tab_before):
 		css_str = css_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
 		parse = Paser(css_str)
-		format_css = Format(parse.css_stack,settings);
-		# print css_str
-
+		format_obj = Format(parse.css_stack,settings,tab_before)
+		self.formated_str = format_obj.formated_str
 class Paser:
 	#state 0 '{'
 	#state 1 string
@@ -14,8 +12,6 @@ class Paser:
 	#state 3 ';'
 	#state 7 'sigle line comment'
 	#state 8 'multi-line comment'
-	strings=''
-	css_stack = []
 	#comment css todo
 	def __init__(self, css_str):
 		self.strings = css_str.strip()
@@ -34,7 +30,7 @@ class Paser:
 			'siglequoteFlag':False,
 			'doublequoteFlag':False
 		}
-		for index in range(1,length):
+		for index in range(1,length+1):
 			if string[index-1] == '*' and string[index] == '/' and state['state'] == 8:
 				# /* comment closed
 				state['collector']+='/'
@@ -84,8 +80,9 @@ class Paser:
 				if(state['collector'].strip() != ''):
 					current_style_obj["classList"].append(state['collector'].strip()+';')
 				state['collector'] = ''
-				work_stack.pop()
-				if len(work_stack)>0:
+				# work_stack.pop()
+				if len(work_stack)>2:
+					work_stack.pop()
 					current_style_obj = work_stack[len(work_stack)-1]
 				else:
 					current_style_obj = ''
@@ -106,19 +103,18 @@ class Paser:
 					state['doublequoteFlag'] = not state['doublequoteFlag']
 				state['collector']+=string[index]
 				state['state'] = 1
+		nest_stack.append(state['collector'].strip()+'')
 		return nest_stack
 
 class Format:
-	css_stack = []
-	setting = {}
-	def __init__(self,token_stack,setting):
+	def __init__(self,token_stack,setting,tab_before):
 		self.css_stack = token_stack
 		self.setting = setting
-		self.format_css()
-	def format_css(self):
+		self.formated_str = self.format_css(tab_before)
+	def format_css(self,tab_before):
 		length = len(self.css_stack);
 		tab_size = self.setting['tab_size']
-		index_tab = 0
+		index_tab = tab_before
 		string = ''
 		for index in range(0,length):
 			if type(self.css_stack[index]) == dict:
@@ -127,7 +123,7 @@ class Format:
 				pass
 			else:
 				string+=index_tab*' '*tab_size+self.css_stack[index].strip()+'\n'
-		print(string)
+		return string
 
 	def format_css_dict(self,css_obj,index_tab,string):
 		string += index_tab*' '*self.setting['tab_size']+css_obj['name'].strip()+' {'+'\n'
@@ -139,18 +135,3 @@ class Format:
 				string=self.format_css_dict(css_obj['children'][index],index_tab,string)
 		string+=(index_tab-1)*' '*self.setting['tab_size']+'}\n'
 		return string
-
-		
-
-
-def read_file():
-	#current running script is index.py
-	fs = open('vue-example')
-	html_str = fs.read();
-	fs.close( )
-	return html_str
-	
-def write_file(string):
-	fs = open('vue-example','r+')
-	fs.write(string)
-	fs.close()

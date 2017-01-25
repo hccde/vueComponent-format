@@ -1,10 +1,9 @@
-<style type="text/css">
+<style type="text">
 	.popup{
 		width: rem(600);
 		height: rem(600);
 		background-color:white;
-		overflow: auto;
-		.question{
+		overflow: auto;.question{
 			padding-left:rem(30);
 			display: flex;
 			align-items:center;
@@ -14,7 +13,7 @@
 			padding-bottom:rem(34);
 		}
 		ul{
-			width: 100%;
+			width: 100%
 			height: auto;
 			padding-left:rem(30);
 			padding-right:rem(30);
@@ -33,23 +32,40 @@
 
 		}
 	}
-</style>
+  	
+</style> 
 <template>
-	<div class="activity-detail">
-    <ul class="flexbox-parent detail-section statistics"><li class="flexbox-child">报名<br>{{ signedCount }}</li>
-      <li class="flexbox-child">阅读<br>{{ readedCount }}</li>
-      <!-- <li class="flexbox-child">分享<br>{{ sharedCount }}</li> -->
-      <li class="flexbox-child">评论<br>{{ commentCount }}</li>
-    </ul>
-    <div class="detail-section">
-      <mt-cell v-for="menu in menus" :title="menu.title" is-link @click.native="linkTo(menu)"></mt-cell>
+    <div class = "activity-detail">
+        <ul class = "flexbox-parent detail-section statistics">
+            <li class = "flexbox-child">
+                报名
+                <br>
+                {{ signedCount }}
+            </li>
+            <li class = "flexbox-child">
+                阅读
+                <br>
+                {{ readedCount }}
+            </li>
+        <!-- <li class="flexbox-child">分享<br>{{ sharedcount }}</li> -->
+            <li class = "flexbox-child">
+                评论
+                <br>
+                {{ commentCount }}
+            </li>
+        </ul>
+        <div class = "detail-section">
+            <mt-cell v-for = "menu in menus" :title = "menu.title" is-link @click.native = "linkto(menu)"></mt-cell>
+        </div>
+        <mt-cell class = "detail-section" title = "开启报名">
+            <mt-switch :value = "signenabled" @change.native = "updatestatus(signenabled)"></mt-switch>
+        </mt-cell>
+        <interaction-block :component-list = "sharelist"></interaction-block>
     </div>
-    <mt-cell class="detail-section" title="开启报名">
-      <mt-switch :value="signEnabled" @change.native="updateStatus(signEnabled)"></mt-switch>
-    </mt-cell>
-    <interaction-block :component-list="shareList"></interaction-block>
-  </div>
 </template>
+
+
+
 <script type="text/javascript">
 import { string2Array } from '../../helpers/util';
 

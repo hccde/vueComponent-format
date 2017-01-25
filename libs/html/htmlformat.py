@@ -1,22 +1,17 @@
 setting ={}
 class HtmlFormat:
-	def __init__(self, html_str,settings):
+	def __init__(self, html_str,settings,tab_before):
 		global setting
 		setting = settings;
 		html_str = html_str.replace('\r\n','\n').replace('\r','\n').replace('\t',settings['tab_size']*' ')
-		# write_file(html_str)
 		parse = Parse(html_str)
-		print(parse.node_stack)
-		Format(parse.node_stack)
+		html_format =  Format(parse.node_stack,tab_before)
+		self.formated_str = html_format.formated_str
 		pass;
 
 #todo
 #comment should be used as some new html string
 class Parse:
-	string = ''
-	tag_stack = []
-	node_stack = []
-
 	def __init__(self,html):
 		self.string = rid_tag_space(html)
 		self.tag_stack = self.split_tag()
@@ -93,7 +88,6 @@ class Parse:
 	def create_node_stack(self):
 		result_stack = []
 		length = len(self.tag_stack)
-		print(self.tag_stack)
 		for index in range(0,length):
 			result_stack.append(self.create_node(self.tag_stack[index]))
 		return result_stack
@@ -157,7 +151,7 @@ class Parse:
 					continue
 				else:
 					state['collector'] += node_str[index]
-			elif state['current_state']==5 and node_str[index]==' ':
+			elif state['current_state']==5 and node_str[index]==' ' and (not state['quotesflag']):
 				state['stack'].append(state['collector'])
 				state['collector'] = ''
 				state['current_state'] = 2
@@ -169,10 +163,12 @@ class Parse:
 				state['current_state'] = 3
 			elif state['current_state']== 3 and node_str[index]!=' ':
 				state['collector'] += node_str[index]
-			elif state['current_state'] == 3 and node_str[index]==' ':
+			elif state['current_state'] == 3 and node_str[index]==' ' and (not state['quotesflag']):
 				state['stack'].append(state['collector'])
 				state['collector'] = ''
 				state['current_state'] = 2
+			else:
+				state['collector'] += node_str[index]
 		state['stack'].append(state['collector'])
 
 		# create dom object
@@ -242,29 +238,25 @@ def rid_tag_space(raw_str):
 
 		return raw_str
 
-#todo auto-close tag
-#todo br tag
 class Format:
-	node_stack = []
-	html_setting = {}
-	def __init__(self, node_stack):
+	def __init__(self, stack,tab_before):
 		#remove '/n' '/space' between tags
-		for index in range(0,len(node_stack)):
-			node_stack[index]['value'] = node_stack[index]['value'].strip();
-			print(node_stack[index])
-			if(node_stack[index]['type'] !='tag'):
-				if len(node_stack[index]['value']):
-					self.node_stack.append(node_stack[index])
+		self.node_stack = []
+		for index in range(0,len(stack)):
+			stack[index]['value'] = stack[index]['value'].strip();
+			if(stack[index]['type'] !='tag'):
+				if len(stack[index]['value']):
+					self.node_stack.append(stack[index])
 			else:
-				self.node_stack.append(node_stack[index])
-		self.format()
+				self.node_stack.append(stack[index])
+		self.formated_str = self.format(tab_before)
 	def make_tag_pair(self):
 		pass
 	#we dont consider unclosed tag at first
-	def format(self):
+	def format(self,tab_before):
 		formated_str = ''
 		is_void_ele = False;
-		index_tab = 0;
+		index_tab = tab_before;
 		size = setting['tab_size']
 		self.html_setting = html_setting = setting['html']
 		work_stack = []
@@ -274,7 +266,9 @@ class Format:
 			'closeTag': False, 
 			'name': '', 
 			'isVoidEle': False,
-			'type':'text'})
+			'type':'text',
+			'value':''
+			})
 		for index in range(1,len(self.node_stack)):
 			node_obj = self.node_stack[index]
 			if node_obj['type'] != 'tag':
@@ -321,7 +315,7 @@ class Format:
 					#no content element
 					if '/'+self.node_stack[index-1]['name'] == node_obj['name']:
 						sigle_line = True;
-					if '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
+					if len(work_stack)-1 >= 0 and '/'+ work_stack[len(work_stack)-1] == node_obj['name']:
 						work_stack.pop()
 						index_tab-=1
 						if not sigle_line:
@@ -349,7 +343,6 @@ class Format:
 			#reset 
 			is_void_ele = False
 		formated_str = formated_str.strip();
-		print(formated_str)
 		return formated_str
 
 	def is_in_list(self,node_name,arr):
@@ -390,5 +383,5 @@ class Format:
 
 	def attribute_dict_tostr(self,dict_obj):
 		#todo long vue attribute
-		key_list = dict.keys(dict_obj);
+		key_list = list(dict.keys(dict_obj))
 		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';
