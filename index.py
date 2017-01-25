@@ -17,7 +17,6 @@ class FormatCommand(sublime_plugin.TextCommand):
     	# self.view.sel().clear()
     	# replace string 
     	self.view.replace(edit,selection,formated_str)
-
     def dispatch(self,reg):
     	global css_html_js
     	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
