@@ -107,19 +107,11 @@ class Paser:
 		return nest_stack
 
 class Format:
-<<<<<<< HEAD
 	def __init__(self,token_stack,setting,tab_before):
 		self.css_stack = token_stack
 		self.setting = setting
 		self.formated_str = self.format_css(tab_before)
 	def format_css(self,tab_before):
-=======
-	def __init__(self,token_stack,setting):
-		self.css_stack = token_stack
-		self.setting = setting
-		self.formated_str = self.format_css()
-	def format_css(self):
->>>>>>> d6f207ac13581c1e2800fa307876635737e0cff0
 		length = len(self.css_stack);
 		tab_size = self.setting['tab_size']
 		index_tab = tab_before

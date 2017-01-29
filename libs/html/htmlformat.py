@@ -239,11 +239,7 @@ def rid_tag_space(raw_str):
 		return raw_str
 
 class Format:
-<<<<<<< HEAD
 	def __init__(self, stack,tab_before):
-=======
-	def __init__(self, stack):
->>>>>>> d6f207ac13581c1e2800fa307876635737e0cff0
 		#remove '/n' '/space' between tags
 		self.node_stack = []
 		for index in range(0,len(stack)):
@@ -253,11 +249,8 @@ class Format:
 					self.node_stack.append(stack[index])
 			else:
 				self.node_stack.append(stack[index])
-<<<<<<< HEAD
 		self.formated_str = self.format(tab_before)
-=======
-		self.formated_str = self.format()
->>>>>>> d6f207ac13581c1e2800fa307876635737e0cff0
+
 	def make_tag_pair(self):
 		pass
 	#we dont consider unclosed tag at first
