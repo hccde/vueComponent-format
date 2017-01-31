@@ -12,7 +12,7 @@ class FormatCommand(sublime_plugin.TextCommand):
     	# get the first selection
     	global css_html_js
     	selection = list(self.view.sel())[0]
-    	# print(css_html_js)
+    	# print(self.view. css_html_js)
     	formated_str = self.dispatch(selection)
     	# self.view.sel().clear()
     	# replace string 
@@ -41,6 +41,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     			return 2
 
     	def format_str(segment_number,begin,end):
+    		#object ownership led old object undeleted 
+    		#todo important!!!
     		region_str = css_html_js[3][begin:end+1]
     		if segment_number == 0:
     			css = cssformat.CssFormat(region_str,setting,get_before_tab(begin))
