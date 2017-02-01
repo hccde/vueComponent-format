@@ -17,7 +17,7 @@
     }
 }
 ul {
-    width: 100%
+    width: 100%;
             height: auto;
     padding-left:rem(30);
     padding-right:rem(30);
@@ -32,6 +32,8 @@ ul {
         justify-content: space-between;
     }
 }
+
+
 </style>
 
 

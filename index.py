@@ -41,9 +41,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     			return 2
 
     	def format_str(segment_number,begin,end):
-    		#object ownership led old object undeleted 
-    		#todo important!!!
     		region_str = css_html_js[3][begin:end+1]
+    		# print(region_str)
     		if segment_number == 0:
     			css = cssformat.CssFormat(region_str,setting,get_before_tab(begin))
     			return css.formated_str
@@ -55,6 +54,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     			return js.formated_str
 
     	segment_number = in_which_seg(begin)
+    	#todo split selected region into three code segments
+    	#this place only split one time,not engouth
     	formated_str = ''
     	if css_html_js[segment_number]['end'] >= begin:
     		formated_str+=format_str(segment_number,begin,end)
