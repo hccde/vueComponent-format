@@ -50,8 +50,25 @@ class FormatCommand(sublime_plugin.TextCommand):
     			html = htmlformat.HtmlFormat(region_str,setting,get_before_tab(begin))
     			return html.formated_str
     		else:
+    			pos = css_html_js[2]
+    			jsformated = ''
+    			endflag = False
+    			# print(css_html_js[3][pos['begin']:pos['begin']+pos['length-open']])
+    			# print(css_html_js[3][pos['end']-pos['length-close']:pos['end']])
+    			if begin<=pos['begin'] and end >= pos['begin']+pos['length-open']:
+    				begin = pos['begin']+pos['length-open']
+    				jsformated = css_html_js[3][pos['begin']:pos['begin']+pos['length-open']]+'\n'
+    			if end>=pos['end'] and begin <= pos['end']-pos['length-close']:
+    				end = pos['end']-pos['length-close']
+    				endflag = True
+
+    			region_str = css_html_js[3][begin:end]
     			js = jsformat.JsFormat(region_str,setting,get_before_tab(begin))
-    			return js.formated_str
+    			if endflag:
+    				jsformated+=(js.formated_str+'\n'+css_html_js[3][pos['end']-pos['length-close']:pos['end']])
+    			else:
+    				jsformated+=js.formated_str
+    			return jsformated
 
     	segment_number = in_which_seg(begin)
     	formated_str = ''
@@ -139,7 +156,8 @@ class SplitCode:
 			#collect tag name
 			'collector':'',
 			#store splited tag
-			'tag_stack':[] 
+			'tag_stack':[],
+			'length':0
 		}
 		for index in range(0,length):
 			if self.string[index] =='<' and state['current_state']==3:
@@ -147,21 +165,28 @@ class SplitCode:
 				state['tag_stack'].append({
 						'name':'',
 						'end':-1,
-						'begin':index
+						'begin':index,
+						'length':0
 					})
+				state['length']+=1;
 			elif self.string[index] == '>' and state['current_state'] == 2:
 				state['current_state'] = 3;
 				state['tag_stack'][len(state['tag_stack'])-1]['name'] = state['collector'].lower();
 				state['tag_stack'][len(state['tag_stack'])-1]['end'] = index;
+				state['tag_stack'][len(state['tag_stack'])-1]['length'] += state['length']+1;
 				state['collector'] = ''
+				state['length'] = 0
 			elif state['current_state']==1 or state['current_state']==2:
 				# if self.string[index] != ' ' :
 				state['collector'] += self.string[index]
+				state['length']+=1
 				state['current_state'] = 2;
 			#find special tag
 		res = {
 			'begin':-1,
-			'end':-1
+			'end':-1,
+			'length-open':0,#the length of open tag
+			'length-close':0
 		}
 		temIndex = -1;
 		for index in range(0,len(state['tag_stack'])):
@@ -178,8 +203,10 @@ class SplitCode:
 				names = split_name_table
 			if names == name:
 				res['begin'] = state['tag_stack'][index]['begin']
+				res['length-open'] = state['tag_stack'][index]['length']
 			if names == '/'+name and res['begin'] != -1:
 				temIndex = state['tag_stack'][index]['end']
+				res['length-close'] = state['tag_stack'][index]['length']
 				# include '>'
 		res['end'] = temIndex+1;
 		return res;

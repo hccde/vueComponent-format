@@ -18,7 +18,7 @@
 }
 ul {
     width: 100%;
-            height: auto;
+    height: auto;
     padding-left:rem(30);
     padding-right:rem(30);
     font-size:rem(32);
@@ -32,11 +32,7 @@ ul {
         justify-content: space-between;
     }
 }
-
-
 </style>
-
-
 <template>
     <div class = "activity-detail">
         <ul class = "flexbox-parent detail-section statistics">

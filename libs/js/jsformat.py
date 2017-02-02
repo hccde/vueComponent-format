@@ -5,7 +5,7 @@ class JsFormat:
     def __init__(self, js_str,settings,tab_before):
         self.js_str = js_str
         options = jsbeautifier.default_options()
-        options.indent_size = 4
+        options.indent_size = settings['tab_size']
         options.indent_char = ' '
         options.preserve_newlines = True
         options.jslint_happy = False
