@@ -57,7 +57,7 @@ class FormatCommand(sublime_plugin.TextCommand):
     			# print(css_html_js[3][pos['end']-pos['length-close']:pos['end']])
     			if begin<=pos['begin'] and end >= pos['begin']+pos['length-open']:
     				begin = pos['begin']+pos['length-open']
-    				jsformated = css_html_js[3][pos['begin']:pos['begin']+pos['length-open']]+'\n'
+    				jsformated = '\n'+css_html_js[3][pos['begin']:pos['begin']+pos['length-open']]+'\n'
     			if end>=pos['end'] and begin <= pos['end']-pos['length-close']:
     				end = pos['end']-pos['length-close']
     				endflag = True
