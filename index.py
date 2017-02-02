@@ -54,10 +54,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     			return js.formated_str
 
     	segment_number = in_which_seg(begin)
-    	#todo split selected region into three code segments
-    	#this place only split one time,not engouth
     	formated_str = ''
-    	if css_html_js[segment_number]['end'] >= begin:
+    	if css_html_js[segment_number]['end'] >= end:
     		formated_str+=format_str(segment_number,begin,end)
     	else:
     		formated_str+=format_str(segment_number,begin,css_html_js[segment_number]['end'])
@@ -67,7 +65,7 @@ class FormatCommand(sublime_plugin.TextCommand):
     		else:
     			formated_str+=format_str(segment_number+1,begin,css_html_js[segment_number+1]['end'])
     			begin = css_html_js[segment_number+1]['end']+1
-    			if(css_html_js[segment_number+1]['end'] >= end):
+    			if(css_html_js[segment_number+2]['end'] >= end):
     				formated_str+=format_str(segment_number+2,begin,end)
     			else:
     				#something error
