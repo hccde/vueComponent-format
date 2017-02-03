@@ -7,6 +7,8 @@ from .libs.html import htmlformat
 from .libs.css import cssformat
 from .libs.js import jsformat
 css_html_js = [{'begin':0,'end':0},{'begin':0,'end':0},{'begin':0,'end':0}]
+is_enable_plugin = False
+
 class FormatCommand(sublime_plugin.TextCommand):
     def run(self, edit):
     	# get the first selection
@@ -17,6 +19,8 @@ class FormatCommand(sublime_plugin.TextCommand):
     	# self.view.sel().clear()
     	# replace string 
     	self.view.replace(edit,selection,formated_str)
+    def is_enabled(self):
+    	return is_enable_plugin
     def dispatch(self,reg):
     	global css_html_js
     	setting = json.load(open(os.path.dirname(os.path.realpath(__file__))+'/setting','r'))
@@ -92,6 +96,8 @@ class FormatCommand(sublime_plugin.TextCommand):
 
 
 class FormatEvent(sublime_plugin.EventListener):
+	def __init__(self):
+		super(FormatEvent, self).__init__()
 	def run(self,view):
 		pass
 	def on_post_save(self,view):
@@ -108,6 +114,9 @@ class FormatEvent(sublime_plugin.EventListener):
 		css_html_js.append(code_set.get_js())
 		css_html_js.append(selection_str)
 	def on_activated(self,view):
+		global is_enable_plugin
+		if view.file_name() != None:
+			is_enable_plugin =  view.file_name().split('.').pop().lower()=='vue'
 		global css_html_js
 		css_html_js = []
 		size = view.size()

@@ -62,9 +62,6 @@ ul {
         <interaction-block :component-list = "sharelist"></interaction-block>
     </div>
 </template>
-
-
-
 <script type="text/javascript">
 import {
     string2Array
