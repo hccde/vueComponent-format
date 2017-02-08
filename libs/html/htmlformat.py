@@ -376,13 +376,13 @@ class Format:
 						html_node_string += self.attribute_dict_tostr(node['attribute'][index])
 				else:
 					if long_attribute:
-						html_node_string += '\n'+(space_count+1)*' '+node['attribute'][index]+' '
+						html_node_string += '\n'+(space_count+1)*' '+node['attribute'][index].strip()+' '
 					else:
-						html_node_string += node['attribute'][index]+' '
+						html_node_string += node['attribute'][index].strip()+' '
 
 		return html_node_string.rstrip()+'>'
 
 	def attribute_dict_tostr(self,dict_obj):
 		#todo long vue attribute
 		key_list = list(dict.keys(dict_obj))
-		return key_list[0]+' = ' +dict_obj[key_list[0]]+' ';
+		return key_list[0].strip()+' = ' +dict_obj[key_list[0]].strip()+' ';

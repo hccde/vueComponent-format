@@ -84,8 +84,6 @@ class FormatCommand(sublime_plugin.TextCommand):
     		if(css_html_js[segment_number+1]['end'] >= end):
     			formated_str+=format_str(segment_number+1,begin,end)
     		else:
-    			print(css_html_js[segment_number+1]['end'])
-    			print(end)
     			formated_str+=format_str(segment_number+1,begin,css_html_js[segment_number+1]['end'])
     			begin = css_html_js[segment_number+1]['end']+1
 

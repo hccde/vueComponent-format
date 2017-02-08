@@ -19,7 +19,7 @@
             </li>
         </ul>
         <div class = "detail-section">
-            <mt-cell v-for = "menu in menus" :title = "menu.title" is-link @click.native = "linkto(menu)"></mt-cell>
+            <mt-cell v-for = "menu in menus"   :title = "menu.title" is-link @click.native = "linkto(menu)" name="test"></mt-cell>
         </div>
         <mt-cell class = "detail-section" title = "开启报名">
             <mt-switch :value = "signenabled" @change.native = "updatestatus(signenabled)"></mt-switch>
