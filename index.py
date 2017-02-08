@@ -46,7 +46,7 @@ class FormatCommand(sublime_plugin.TextCommand):
 
     	def format_str(segment_number,begin,end):
     		region_str = css_html_js[3][begin:end+1]
-    		# print(region_str)
+    		# print(css_html_js)
     		if segment_number == 0:
     			css = cssformat.CssFormat(region_str,setting,get_before_tab(begin))
     			return css.formated_str
@@ -84,9 +84,12 @@ class FormatCommand(sublime_plugin.TextCommand):
     		if(css_html_js[segment_number+1]['end'] >= end):
     			formated_str+=format_str(segment_number+1,begin,end)
     		else:
+    			print(css_html_js[segment_number+1]['end'])
+    			print(end)
     			formated_str+=format_str(segment_number+1,begin,css_html_js[segment_number+1]['end'])
     			begin = css_html_js[segment_number+1]['end']+1
-    			if(css_html_js[segment_number+2]['end'] >= end):
+
+    			if(segment_number+2<=2 and css_html_js[segment_number+2]['end'] >= end):
     				formated_str+=format_str(segment_number+2,begin,end)
     			else:
     				#something error

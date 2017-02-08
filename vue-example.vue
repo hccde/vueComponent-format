@@ -1,38 +1,3 @@
-<style type="text">
-.popup {
-    width: rem(600);
-    height: rem(600);
-    background-color:white;
-    overflow: auto;
-    .question {
-        padding-left:rem(30);
-        display: flex;
-        align-items:center;
-        min-height: rem(100);
-        font-size: rem(32);
-        padding-top:rem(34);
-        padding-bottom:rem(34);
-        .answer {
-        }
-    }
-}
-ul {
-    width: 100%;
-    height: auto;
-    padding-left:rem(30);
-    padding-right:rem(30);
-    font-size:rem(32);
-    li {
-        border-top: 1px solid #e5e5e5;
-        width: 100%;
-        min-height: rem(100);
-        font-size: rem(32);
-        display: flex;
-        align-items:center;
-        justify-content: space-between;
-    }
-}
-</style>
 <template>
     <div class = "activity-detail">
         <ul class = "flexbox-parent detail-section statistics">
